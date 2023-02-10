@@ -6,6 +6,7 @@ import (
 
 type walletService interface {
 	New() *models.Wallet
+	GetKeys(*models.Wallet) (publicKey string, privateKey string)
 }
 
 type WalletService struct{}
@@ -17,10 +18,16 @@ func (WalletService) New() *models.Wallet {
 	wallet := &models.Wallet{}
 
 	privateKey := models.CreatePrivateKey()
-	publicKey := models.GetPublicKey(privateKey)
+	publicKey := models.MakePublicKey(privateKey)
 
-	wallet.PublicKey = publicKey
+	wallet.SetPublicKey(publicKey)
 	wallet.SetPrivateKey(privateKey)
 
 	return wallet
+}
+
+func (WalletService) GetKeys(w *models.Wallet) (publicKey string, privateKey string) {
+	publicKey = w.GetPublicKey()
+	privateKey = w.GetPrivateKeyStr()
+	return
 }
