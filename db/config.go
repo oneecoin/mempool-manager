@@ -15,12 +15,8 @@ const (
 	TRANSACTONS   = "transactions"
 )
 
-type Database struct {
-	ExampleChain *mongo.Collection
-	Transactions *mongo.Collection
-}
-
-var DB = &Database{}
+var ExampleChain = &mongo.Collection{}
+var Transactions = &mongo.Collection{}
 
 func InitDatabase() *mongo.Client {
 	uri := os.Getenv("MONGODB_URI")
@@ -31,8 +27,8 @@ func InitDatabase() *mongo.Client {
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	lib.HandleErr(err)
 
-	DB.ExampleChain = client.Database(DB_NAME).Collection(EXAMPLE_CHAIN)
-	DB.Transactions = client.Database(DB_NAME).Collection(TRANSACTONS)
+	ExampleChain = client.Database(DB_NAME).Collection(EXAMPLE_CHAIN)
+	Transactions = client.Database(DB_NAME).Collection(TRANSACTONS)
 
 	return client
 }
