@@ -12,15 +12,15 @@ import (
 
 func main() {
 
-	// gin
-	api.InitServer()
-
 	// .env
 	if os.Getenv("DEBUG") == "" {
 		if err := godotenv.Load(); err != nil {
 			fmt.Println("No .env file found")
 		}
 	}
+
+	// gin
+	api.InitServer()
 
 	// MongoDB
 	client := db.InitDatabase()
