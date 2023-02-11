@@ -15,7 +15,7 @@ type IWalletModel interface {
 	CreatePrivateKey() (privateKey *ecdsa.PrivateKey)
 	MakePublicKey(key *ecdsa.PrivateKey) string
 	EncodePublicKey(publicKey string) (*big.Int, *big.Int, error)
-	RestoreWallet(publicKey string, privateKey string) *Wallet
+	RestoreWallet(publicKey string, privateKey string) (*Wallet, error)
 }
 
 type walletModel struct{}
@@ -36,15 +36,17 @@ func (walletModel) EncodePublicKey(publicKey string) (*big.Int, *big.Int, error)
 	return restoreBigInts(publicKey)
 }
 
-func (walletModel) RestoreWallet(publicKey string, privateKey string) *Wallet {
+func (walletModel) RestoreWallet(publicKey string, privateKey string) (*Wallet, error) {
 	privKeyBytes, err := hex.DecodeString(privateKey)
 	lib.HandleErr(err)
 	privKeyObj, err := x509.ParseECPrivateKey(privKeyBytes)
-	lib.HandleErr(err)
+	if err != nil {
+		return nil, err
+	}
 
 	wallet := &Wallet{}
 	wallet.SetPrivateKey(privKeyObj)
 	wallet.SetPublicKey(publicKey)
 
-	return wallet
+	return wallet, nil
 }

@@ -5,3 +5,7 @@ func HandleErr(err error) {
 		panic(err)
 	}
 }
+
+func HasErr(err error) bool {
+	return err != nil
+}

@@ -40,13 +40,18 @@ func (walletService) GetKeys(w *models.Wallet) (publicKey string, privateKey str
 }
 
 func (walletService) ValidateWallet(publicKey string, privateKey string) bool {
-	wallet := mWallet.RestoreWallet(publicKey, privateKey)
+	wallet, err := mWallet.RestoreWallet(publicKey, privateKey)
+	if lib.HasErr(err) {
+		return false
+	}
 	hash := []byte("hi")
 	r, s, err := ecdsa.Sign(rand.Reader, wallet.GetPrivateKey(), hash)
-	lib.HandleErr(err)
+	if lib.HasErr(err) {
+		return false
+	}
 
 	x, y, err := mWallet.EncodePublicKey(publicKey)
-	if err != nil {
+	if lib.HasErr(err) {
 		return false
 	}
 
