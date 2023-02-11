@@ -12,5 +12,5 @@ func InitServer() {
 	// routes
 	routes.GetRoutes(app)
 
-	app.Run()
+	app.Run(":8080")
 }

@@ -11,7 +11,7 @@ import (
 func GetRoutes(router *gin.Engine) {
 
 	// websocket upgrade
-	router.POST("/ws", ws.UpgradeWS)
+	router.GET("/ws", ws.UpgradeWS)
 
 	// wallets
 	w := router.Group("/wallets")
