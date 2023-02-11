@@ -6,7 +6,8 @@ import (
 
 type walletService interface {
 	New() *models.Wallet
-	GetKeys(*models.Wallet) (publicKey string, privateKey string)
+	GetKeys(w *models.Wallet) (publicKey string, privateKey string)
+	ValidateWallet(publicKey string, privateKey string) bool
 }
 
 type WalletService struct{}
@@ -30,4 +31,8 @@ func (WalletService) GetKeys(w *models.Wallet) (publicKey string, privateKey str
 	publicKey = w.GetPublicKey()
 	privateKey = w.GetPrivateKeyStr()
 	return
+}
+
+func (WalletService) ValidateWallet(publicKey string, privateKey string) bool {
+	wallet := models.RestoreWallet(publicKey, privateKey)
 }
