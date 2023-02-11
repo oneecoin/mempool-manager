@@ -38,7 +38,7 @@ func (ExampleChainService) ValidateBlock(block *models.ExampleChainBlock) bool {
 			return false
 		}
 		// invalid hash
-		if hashBlock(*block) != block.Hash {
+		if hashBlock(block) != block.Hash {
 			return false
 		}
 		// invalid nonce

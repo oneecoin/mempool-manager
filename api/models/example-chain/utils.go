@@ -12,7 +12,7 @@ import (
 func initSummary() *ExampleChain {
 	summary := &ExampleChain{
 		Height:     0,
-		LatestHash: "",
+		LatestHash: "Genesis",
 	}
 
 	// is Collection empty?

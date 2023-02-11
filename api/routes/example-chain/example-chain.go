@@ -30,16 +30,16 @@ func CreateBlock(c *gin.Context) {
 	lib.HandleErr(err)
 
 	block := &examplechain_model.ExampleChainBlock{
-		Data:      req.Data,
-		PublicKey: req.PublicKey,
-		Hash:      req.Hash,
-		PrevHash:  req.PrevHash,
-		Height:    req.Height,
-		Nonce:     req.Nonce,
+		Data:      req.Block.Data,
+		PublicKey: req.Block.PublicKey,
+		Hash:      req.Block.Hash,
+		PrevHash:  req.Block.PrevHash,
+		Height:    req.Block.Height,
+		Nonce:     req.Block.Nonce,
 	}
 
 	// validation
-	valid := wallet.ValidateWallet(req.PublicKey, req.PrivateKey)
+	valid := wallet.ValidateWallet(req.Block.PublicKey, req.PrivateKey)
 	valid = valid && exchain.ValidateBlock(block)
 	if !valid {
 		c.Status(http.StatusNotAcceptable)

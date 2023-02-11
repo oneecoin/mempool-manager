@@ -9,8 +9,24 @@ import (
 	"github.com/onee-only/mempool-manager/lib"
 )
 
-func hashBlock(block models.ExampleChainBlock) string {
-	block.Hash = ""
+type BlockForHash struct {
+	Data      string `json:"data"`
+	PublicKey string `json:"publicKey"`
+	Hash      string `json:"hash"`
+	PrevHash  string `json:"prevHash"`
+	Height    int    `json:"height"`
+	Nonce     int    `json:"nonce"`
+}
+
+func hashBlock(payload *models.ExampleChainBlock) string {
+	block := BlockForHash{
+		Data:      payload.Data,
+		PublicKey: payload.PublicKey,
+		Hash:      "",
+		PrevHash:  payload.PrevHash,
+		Height:    payload.Height,
+		Nonce:     payload.Nonce,
+	}
 	bytes, err := json.Marshal(block)
 	lib.HandleErr(err)
 
