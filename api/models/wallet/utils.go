@@ -6,11 +6,13 @@ import (
 	"math/big"
 )
 
+// take 2 slices of bytes (big ints), combine it, and return hex string
 func encodeBigInts(a, b []byte) string {
 	bytes := append(a, b...)
 	return fmt.Sprintf("%x", bytes)
 }
 
+// decode hex string. and divide by 2 big ints
 func restoreBigInts(payload string) (*big.Int, *big.Int, error) {
 	bytes, err := hex.DecodeString(payload)
 	if err != nil {

@@ -39,6 +39,7 @@ func (walletService) GetKeys(w *models.Wallet) (publicKey string, privateKey str
 	return
 }
 
+// do fake sign-verify operation
 func (walletService) ValidateWallet(publicKey string, privateKey string) bool {
 	wallet, err := mWallet.RestoreWallet(publicKey, privateKey)
 	if lib.HasErr(err) {

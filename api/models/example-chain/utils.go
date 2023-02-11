@@ -14,12 +14,15 @@ func initSummary() *ExampleChain {
 		Height:     0,
 		LatestHash: "",
 	}
+
+	// is Collection empty?
 	count, err := db.ExampleChain.EstimatedDocumentCount(context.TODO())
 	lib.HandleErr(err)
 	if count == 0 {
 		return summary
 	}
 
+	// get latest block
 	opts := options.Find()
 	opts.SetLimit(1)
 	opts.SetSort(bson.D{{Key: "Height", Value: -1}})

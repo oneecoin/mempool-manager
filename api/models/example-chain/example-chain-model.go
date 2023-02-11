@@ -8,10 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-const (
-	defaultDifficulty = 4
-)
-
 type IExchainModel interface {
 	GetSummary() *ExampleChain
 	SetSummary(*ExampleChainBlock)
@@ -20,8 +16,7 @@ type IExchainModel interface {
 	AddBlock(block *ExampleChainBlock)
 }
 
-type exchainModel struct {
-}
+type exchainModel struct{}
 
 var summary *ExampleChain
 

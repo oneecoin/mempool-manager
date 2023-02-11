@@ -38,12 +38,14 @@ func CreateBlock(c *gin.Context) {
 		Nonce:     req.Nonce,
 	}
 
+	// validation
 	valid := wallet.ValidateWallet(req.PublicKey, req.PrivateKey)
 	valid = valid && exchain.ValidateBlock(block)
 	if !valid {
 		c.Status(http.StatusNotAcceptable)
 		return
 	}
+
 	block.Created = time.Now().Local().String()
 	exchain.AddBlock(block)
 	c.JSON(http.StatusCreated, block)
