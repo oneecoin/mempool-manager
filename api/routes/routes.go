@@ -5,20 +5,30 @@ import (
 	examplechain "github.com/onee-only/mempool-manager/api/routes/example-chain"
 	"github.com/onee-only/mempool-manager/api/routes/transactions"
 	"github.com/onee-only/mempool-manager/api/routes/wallets"
+	"github.com/onee-only/mempool-manager/api/ws"
 )
 
 func GetRoutes(router *gin.Engine) {
 
+	// websocket upgrade
+	router.POST("/ws", ws.UpgradeWS)
+
 	// wallets
-	router.POST("/wallets", wallets.CreateWallet)
-
-	// transactions
-	tx := router.Group("/transactions")
+	w := router.Group("/wallets")
 	{
-		tx.GET("", transactions.GetAllTransactions)
-		tx.POST("", transactions.CreateTransaction)
+		w.POST("", wallets.CreateWallet)
 
-		tx.GET("/:hash", transactions.GetTransaction)
+		w.GET("/:publicKey", wallets.GetTransactions)
+		w.GET("/:publicKey/balance", wallets.GetBalance)
+	}
+
+	// mempool
+	mp := router.Group("/mempool")
+	{
+		mp.GET("", transactions.GetAllTransactions)
+		mp.POST("", transactions.CreateTransaction)
+
+		mp.GET("/:hash", transactions.GetTransaction)
 	}
 
 	// example blockchain
