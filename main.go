@@ -19,10 +19,10 @@ func main() {
 		}
 	}
 
-	// gin
-	api.InitServer()
-
 	// MongoDB
 	client := db.InitDatabase()
 	defer client.Disconnect(context.TODO())
+
+	// gin
+	api.InitServer()
 }

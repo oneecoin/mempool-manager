@@ -8,6 +8,7 @@ import (
 	examplechain_model "github.com/onee-only/mempool-manager/api/models/example-chain"
 	examplechain_service "github.com/onee-only/mempool-manager/api/services/example-chain"
 	wallet_servie "github.com/onee-only/mempool-manager/api/services/wallet"
+	"github.com/onee-only/mempool-manager/lib"
 )
 
 var exchain examplechain_service.IExampleChainService = examplechain_service.ExampleChain
@@ -25,7 +26,8 @@ func GetAllBlocks(c *gin.Context) {
 
 func CreateBlock(c *gin.Context) {
 	req := &CreateBlockRequest{}
-	c.BindJSON(req)
+	err := c.BindJSON(req)
+	lib.HandleErr(err)
 
 	block := &examplechain_model.ExampleChainBlock{
 		Data:      req.Data,
@@ -36,7 +38,7 @@ func CreateBlock(c *gin.Context) {
 		Nonce:     req.Nonce,
 	}
 
-	valid := wallet.ValidateWallet(req.PrivateKey, req.PublicKey)
+	valid := wallet.ValidateWallet(req.PublicKey, req.PrivateKey)
 	valid = valid && exchain.ValidateBlock(block)
 	if !valid {
 		c.Status(http.StatusNotAcceptable)
@@ -44,5 +46,5 @@ func CreateBlock(c *gin.Context) {
 	}
 	block.Created = time.Now().Local().String()
 	exchain.AddBlock(block)
-	c.Status(http.StatusCreated)
+	c.JSON(http.StatusCreated, block)
 }

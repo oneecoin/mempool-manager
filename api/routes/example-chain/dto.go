@@ -17,7 +17,7 @@ type CreateBlockRequest struct {
 	PrivateKey string `binding:"required"`
 	PublicKey  string `binding:"required"`
 	Hash       string `binding:"required"`
-	PrevHash   string `binding:"required"`
-	Height     int    `binding:"required"`
-	Nonce      int    `binding:"required"`
+	PrevHash   string
+	Height     int `binding:"required"`
+	Nonce      int `binding:"required"`
 }

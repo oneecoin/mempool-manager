@@ -35,8 +35,5 @@ func (ExampleChainService) ValidateBlock(block *models.ExampleChainBlock) bool {
 
 func (ExampleChainService) AddBlock(block *models.ExampleChainBlock) {
 	mExchain.AddBlock(block)
-
-	current := mExchain.GetSummary()
-	current.Height = block.Height
-	current.LatestHash = block.Hash
+	mExchain.SetSummary(block)
 }

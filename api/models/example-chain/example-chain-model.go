@@ -14,6 +14,7 @@ const (
 
 type IExchainModel interface {
 	GetSummary() *ExampleChain
+	SetSummary(*ExampleChainBlock)
 	FindAllBlocks() []*ExampleChainBlock
 	ExistsByPublicKey(publicKey string) bool
 	AddBlock(block *ExampleChainBlock)
@@ -22,12 +23,20 @@ type IExchainModel interface {
 type exchainModel struct {
 }
 
-var summary *ExampleChain = initSummary()
+var summary *ExampleChain
 
 var ExchainModel IExchainModel = &exchainModel{}
 
 func (exchainModel) GetSummary() *ExampleChain {
+	if summary == nil {
+		summary = initSummary()
+	}
 	return summary
+}
+
+func (exchainModel) SetSummary(block *ExampleChainBlock) {
+	summary.Height = block.Height
+	summary.LatestHash = block.Hash
 }
 
 func (exchainModel) FindAllBlocks() []*ExampleChainBlock {
@@ -36,6 +45,7 @@ func (exchainModel) FindAllBlocks() []*ExampleChainBlock {
 	lib.HandleErr(err)
 	err = cursor.All(context.TODO(), &blocks)
 	lib.HandleErr(err)
+
 	return blocks
 }
 
