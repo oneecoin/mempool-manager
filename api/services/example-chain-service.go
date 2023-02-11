@@ -32,7 +32,10 @@ func (ExampleChainService) ValidateBlock(block *models.ExampleChainBlock) bool {
 	if block.PrevHash != current.LatestHash {
 		return false
 	}
-	if HashBlock(block) != block.Hash {
+	if HashBlock(*block) != block.Hash {
+		return false
+	}
+	if models.ExistsByPublicKey(block.PublicKey) {
 		return false
 	}
 	return true
@@ -42,7 +45,8 @@ func (ExampleChainService) AddBlock(block *models.ExampleChainBlock) {
 	lib.HandleErr(err)
 }
 
-func HashBlock(block *models.ExampleChainBlock) string {
+func HashBlock(block models.ExampleChainBlock) string {
+	block.Hash = ""
 	bytes, err := json.Marshal(block)
 	lib.HandleErr(err)
 

@@ -52,6 +52,10 @@ func MakePublicKey(key *ecdsa.PrivateKey) string {
 	return encodeBigInts(key.X.Bytes(), key.Y.Bytes())
 }
 
+func EncodePublicKey(publicKey string) (*big.Int, *big.Int, error) {
+	return restoreBigInts(publicKey)
+}
+
 func RestoreWallet(publicKey string, privateKey string) *Wallet {
 	privKeyBytes, err := hex.DecodeString(privateKey)
 	lib.HandleErr(err)

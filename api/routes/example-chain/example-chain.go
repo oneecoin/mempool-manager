@@ -30,15 +30,15 @@ func CreateBlock(c *gin.Context) {
 		PrevHash:  req.PrevHash,
 		Height:    req.Height,
 		Nonce:     req.Nonce,
-		Created:   time.Now().Local().String(),
 	}
 
 	valid := services.Wallet.ValidateWallet(req.PrivateKey, req.PublicKey)
-	valid = services.ExampleChain.ValidateBlock(block)
+	valid = valid && services.ExampleChain.ValidateBlock(block)
 	if !valid {
 		c.Status(http.StatusNotAcceptable)
 		return
 	}
+	block.Created = time.Now().Local().String()
 	services.ExampleChain.AddBlock(block)
 	c.Status(http.StatusCreated)
 }

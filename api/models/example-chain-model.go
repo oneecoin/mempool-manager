@@ -40,3 +40,9 @@ func FindAllBlocks() []*ExampleChainBlock {
 	lib.HandleErr(err)
 	return blocks
 }
+
+func ExistsByPublicKey(publicKey string) bool {
+	count, err := db.ExampleChain.CountDocuments(context.TODO(), bson.D{{Key: "PublicKey", Value: publicKey}})
+	lib.HandleErr(err)
+	return count == 1
+}
