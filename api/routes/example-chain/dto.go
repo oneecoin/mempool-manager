@@ -1,6 +1,6 @@
 package examplechain
 
-import "github.com/onee-only/mempool-manager/api/models"
+import models "github.com/onee-only/mempool-manager/api/models/example-chain"
 
 type BlocksResponse struct {
 	Count  int                         `json:"count"`

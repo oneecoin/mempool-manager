@@ -1,30 +1,31 @@
-package services
+package wallet_servie
 
 import (
 	"crypto/ecdsa"
 	"crypto/elliptic"
 	"crypto/rand"
 
-	"github.com/onee-only/mempool-manager/api/models"
+	models "github.com/onee-only/mempool-manager/api/models/wallet"
 	"github.com/onee-only/mempool-manager/lib"
 )
 
-type walletService interface {
+type IWalletService interface {
 	New() *models.Wallet
 	GetKeys(w *models.Wallet) (publicKey string, privateKey string)
 	ValidateWallet(publicKey string, privateKey string) bool
 }
 
-type WalletService struct{}
+type walletService struct{}
 
-var Wallet walletService = WalletService{}
+var mWallet models.IWalletModel = models.WalletModel
+var WalletService walletService = walletService{}
 
-func (WalletService) New() *models.Wallet {
+func (walletService) New() *models.Wallet {
 
 	wallet := &models.Wallet{}
 
-	privateKey := models.CreatePrivateKey()
-	publicKey := models.MakePublicKey(privateKey)
+	privateKey := mWallet.CreatePrivateKey()
+	publicKey := mWallet.MakePublicKey(privateKey)
 
 	wallet.SetPublicKey(publicKey)
 	wallet.SetPrivateKey(privateKey)
@@ -32,19 +33,19 @@ func (WalletService) New() *models.Wallet {
 	return wallet
 }
 
-func (WalletService) GetKeys(w *models.Wallet) (publicKey string, privateKey string) {
+func (walletService) GetKeys(w *models.Wallet) (publicKey string, privateKey string) {
 	publicKey = w.GetPublicKey()
 	privateKey = w.GetPrivateKeyStr()
 	return
 }
 
-func (WalletService) ValidateWallet(publicKey string, privateKey string) bool {
-	wallet := models.RestoreWallet(publicKey, privateKey)
+func (walletService) ValidateWallet(publicKey string, privateKey string) bool {
+	wallet := mWallet.RestoreWallet(publicKey, privateKey)
 	hash := []byte("hi")
 	r, s, err := ecdsa.Sign(rand.Reader, wallet.GetPrivateKey(), hash)
 	lib.HandleErr(err)
 
-	x, y, err := models.EncodePublicKey(publicKey)
+	x, y, err := mWallet.EncodePublicKey(publicKey)
 	if err != nil {
 		return false
 	}
