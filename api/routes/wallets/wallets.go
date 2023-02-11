@@ -4,14 +4,16 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/onee-only/mempool-manager/api/services"
+	wallet_servie "github.com/onee-only/mempool-manager/api/services/wallet"
 )
 
+var sWallet wallet_servie.IWalletService = wallet_servie.WalletService
+
 func CreateWallet(c *gin.Context) {
-	wallet := services.Wallet.New()
+	wallet := sWallet.New()
 
 	walletRes := WalletResponse{}
-	walletRes.setKeys(services.Wallet.GetKeys(wallet))
+	walletRes.setKeys(sWallet.GetKeys(wallet))
 
 	c.JSON(http.StatusCreated, walletRes)
 }
