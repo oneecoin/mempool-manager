@@ -12,16 +12,14 @@ type LatestBlockResponse struct {
 	LatestHash string `json:"latestHash"`
 }
 
-type CreateBlockRequestNested struct {
-	Data      string `json:"data" binding:"required"`
-	PublicKey string `json:"publicKey" binding:"required"`
-	Hash      string `json:"hash" binding:"required"`
-	PrevHash  string `json:"prevHash" binding:"required"`
-	Height    int    `json:"height" binding:"required"`
-	Nonce     int    `json:"nonce" binding:"required"`
-}
-
 type CreateBlockRequest struct {
-	PrivateKey string                   `json:"privateKey" binding:"required"`
-	Block      CreateBlockRequestNested `json:"block" binding:"required"`
+	PrivateKey string `json:"privateKey" binding:"required"`
+	Block      struct {
+		Data      string `json:"data" binding:"required"`
+		PublicKey string `json:"publicKey" binding:"required"`
+		Hash      string `json:"hash" binding:"required"`
+		PrevHash  string `json:"prevHash" binding:"required"`
+		Height    int    `json:"height" binding:"required"`
+		Nonce     int    `json:"nonce" binding:"required"`
+	} `json:"block" binding:"required"`
 }
