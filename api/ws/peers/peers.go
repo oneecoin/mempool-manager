@@ -5,6 +5,7 @@ import (
 	"sync"
 
 	"github.com/onee-only/mempool-manager/api/ws/messages"
+	"github.com/onee-only/mempool-manager/lib"
 )
 
 type TPeers struct {
@@ -42,12 +43,28 @@ func (*TPeers) BroadcastNewTx() {
 
 func (*TPeers) RequestBlocks(page int) []byte {
 	peer := getRandomPeer()
-	// send request to random miner node
+	pageBytes, err := json.Marshal(page)
+	lib.HandleErr(err)
+	m := &messages.Message{
+		Kind:    messages.MessageBlockRequest,
+		Payload: pageBytes,
+	}
+	mBytes, err := json.Marshal(m)
+	lib.HandleErr(err)
+	peer.Inbox <- mBytes
 }
 
 func (*TPeers) RequestBlock(hash string) []byte {
 	peer := getRandomPeer()
-	// send request to random miner node
+	pageBytes, err := json.Marshal(page)
+	lib.HandleErr(err)
+	m := &messages.Message{
+		Kind:    messages.MessageBlockRequest,
+		Payload: pageBytes,
+	}
+	mBytes, err := json.Marshal(m)
+	lib.HandleErr(err)
+	peer.Inbox <- mBytes
 }
 
 func (*TPeers) handleMessage(m *messages.Message, p *Peer) {

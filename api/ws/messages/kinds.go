@@ -14,7 +14,7 @@ const (
 	// requests from mempool
 	MessageNewPeer
 	MessageBlocksRequest
-	MessageBlockResquest
+	MessageBlockRequest
 
 	// responses from mempool
 	MessageTxsResponse
