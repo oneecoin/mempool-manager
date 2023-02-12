@@ -21,6 +21,8 @@ var Peers *TPeers = &TPeers{
 }
 
 func (*TPeers) InitPeer(p *Peer) {
+	Peers.M.Lock()
+	defer Peers.M.Unlock()
 	go p.read()
 	go p.write()
 	Peers.V[p.GetAddress()] = p
