@@ -2,10 +2,12 @@ package peers
 
 import (
 	"encoding/json"
+	"fmt"
+	"io"
+	"net/http"
 	"sync"
 
 	"github.com/onee-only/mempool-manager/api/ws/messages"
-	"github.com/onee-only/mempool-manager/lib"
 )
 
 type TPeers struct {
@@ -41,30 +43,40 @@ func (*TPeers) BroadcastNewTx() {
 	// send count of transaction
 }
 
-func (*TPeers) RequestBlocks(page int) []byte {
-	peer := getRandomPeer()
-	pageBytes, err := json.Marshal(page)
-	lib.HandleErr(err)
-	m := &messages.Message{
-		Kind:    messages.MessageBlockRequest,
-		Payload: pageBytes,
+func (*TPeers) RequestBlocks(page int) ([]byte, error) {
+	var res *http.Response
+	var err error
+	for {
+		peer := getRandomPeer()
+		res, err = http.Get(fmt.Sprintf("http://%s/blocks&page=%d", peer.GetAddress(), page))
+		if err == nil {
+			break
+		}
 	}
-	mBytes, err := json.Marshal(m)
-	lib.HandleErr(err)
-	peer.Inbox <- mBytes
+	defer res.Body.Close()
+	b, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
 }
 
-func (*TPeers) RequestBlock(hash string) []byte {
-	peer := getRandomPeer()
-	pageBytes, err := json.Marshal(page)
-	lib.HandleErr(err)
-	m := &messages.Message{
-		Kind:    messages.MessageBlockRequest,
-		Payload: pageBytes,
+func (*TPeers) RequestBlock(hash string) ([]byte, error) {
+	var res *http.Response
+	var err error
+	for {
+		peer := getRandomPeer()
+		res, err = http.Get(fmt.Sprintf("http://%s/blocks/%s", peer.GetAddress(), hash))
+		if err == nil {
+			break
+		}
 	}
-	mBytes, err := json.Marshal(m)
-	lib.HandleErr(err)
-	peer.Inbox <- mBytes
+	defer res.Body.Close()
+	b, err := io.ReadAll(res.Body)
+	if err != nil {
+		return nil, err
+	}
+	return b, nil
 }
 
 func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
