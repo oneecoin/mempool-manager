@@ -42,3 +42,14 @@ func (p *Peer) read() {
 		Peers.handleMessage(m, p)
 	}
 }
+
+func (p *Peer) write() {
+	defer p.closeConn()
+	for {
+		m, ok := <-p.Inbox
+		if !ok {
+			break
+		}
+		p.Conn.WriteMessage(websocket.TextMessage, m)
+	}
+}

@@ -22,3 +22,7 @@ const (
 	MessageRejectPeer
 	MessagePeerRejected
 )
+
+type PayloadRejectPeer struct {
+	PeerAddress string
+}
