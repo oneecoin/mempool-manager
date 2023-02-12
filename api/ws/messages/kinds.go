@@ -12,6 +12,7 @@ const (
 	MessageBlockResponse
 
 	// requests from mempool
+	MessageNewPeer
 	MessageBlocksRequest
 	MessageBlockResquest
 
@@ -23,6 +24,6 @@ const (
 	MessagePeerRejected
 )
 
-type PayloadRejectPeer struct {
+type PayloadPeer struct {
 	PeerAddress string
 }

@@ -5,7 +5,6 @@ import (
 	"sync"
 
 	"github.com/onee-only/mempool-manager/api/ws/messages"
-	"github.com/onee-only/mempool-manager/lib"
 )
 
 type TPeers struct {
@@ -18,34 +17,44 @@ var Peers *TPeers = &TPeers{
 	M: sync.Mutex{},
 }
 
-func (*TPeers) BroadcastNewPeer(p *Peer) {
-
+func (*TPeers) InitPeer(p *Peer) {
+	go p.read()
+	go p.write()
+	Peers.V[p.GetAddress()] = p
 }
-func (*TPeers) BroadcastRejectPeer(p *Peer) {
-	payload, err := json.Marshal(messages.PayloadRejectPeer{
-		PeerAddress: p.GetAddress(),
-	})
-	lib.HandleErr(err)
-	m, err := json.Marshal(messages.Message{
-		Kind:    messages.MessagePeerRejected,
-		Payload: payload,
-	})
-	lib.HandleErr(err)
+
+func (*TPeers) BroadcastNewPeer(p *Peer) {
+	m := marshalPeerMessage(p, messages.MessageNewPeer)
 	for _, peer := range Peers.V {
 		peer.Inbox <- m
 	}
 }
+func (*TPeers) BroadcastRejectPeer(p *Peer) {
+	m := marshalPeerMessage(p, messages.MessagePeerRejected)
+	for _, peer := range Peers.V {
+		peer.Inbox <- m
+	}
+}
+
 func (*TPeers) BroadcastNewTx() {
 
 }
-func (*TPeers) RequestBlocks(page int) {
 
+func (*TPeers) RequestBlocks(page int) {
+	peer := getRandomPeer()
+	// send request to random miner node
 }
+
+func (*TPeers) RequestBlock(hash string) {
+	peer := getRandomPeer()
+	// send request to random miner node
+}
+
 func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 	switch m.Kind {
 	case messages.MessageRejectPeer:
 
-		payload := &messages.PayloadRejectPeer{}
+		payload := &messages.PayloadPeer{}
 		json.Unmarshal(m.Payload, payload)
 
 		peer, exists := Peers.V[payload.PeerAddress]
@@ -62,5 +71,6 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 			}
 		}
 	case messages.MessageTxsRequest:
+		// retrieve transactions with coinbase transaction added
 	}
 }

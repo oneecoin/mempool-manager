@@ -63,5 +63,5 @@ func UpgradeWS(c *gin.Context) {
 
 	// add this connection to peers map
 	prs.BroadcastNewPeer(p)
-	prs.V[address] = p
+	prs.InitPeer(p)
 }
