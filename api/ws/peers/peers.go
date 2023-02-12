@@ -40,12 +40,12 @@ func (*TPeers) BroadcastNewTx() {
 	// send count of transaction
 }
 
-func (*TPeers) RequestBlocks(page int) {
+func (*TPeers) RequestBlocks(page int) []byte {
 	peer := getRandomPeer()
 	// send request to random miner node
 }
 
-func (*TPeers) RequestBlock(hash string) {
+func (*TPeers) RequestBlock(hash string) []byte {
 	peer := getRandomPeer()
 	// send request to random miner node
 }
