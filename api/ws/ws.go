@@ -8,6 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/onee-only/mempool-manager/api/ws/peers"
 	"github.com/onee-only/mempool-manager/lib"
 )
 
@@ -15,6 +16,8 @@ var wsUpgrader = websocket.Upgrader{
 	WriteBufferSize: 1024,
 	ReadBufferSize:  1024,
 }
+
+var prs *peers.TPeers = peers.Peers
 
 func UpgradeWS(c *gin.Context) {
 
@@ -47,17 +50,18 @@ func UpgradeWS(c *gin.Context) {
 	conn, err := wsUpgrader.Upgrade(c.Writer, c.Request, nil)
 	lib.HandleErr(err)
 
-	p := &peer{
-		conn:        conn,
-		inbox:       make(chan []byte),
-		rejectCount: 0,
-		publicKey:   publicKey,
-		address: tAddress{
-			host: host,
-			port: port,
+	p := &peers.Peer{
+		Conn:        conn,
+		Inbox:       make(chan []byte),
+		RejectCount: 0,
+		PublicKey:   publicKey,
+		Address: peers.TAddress{
+			Host: host,
+			Port: port,
 		},
 	}
 
 	// add this connection to peers map
-	Peers.v[address] = p
+	prs.BroadcastNewPeer(p)
+	prs.V[address] = p
 }
