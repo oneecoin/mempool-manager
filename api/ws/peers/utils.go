@@ -9,14 +9,14 @@ import (
 )
 
 func getRandomPeer() *Peer {
-	countsLeft := rand.Intn(len(Peers.V))
+	countLeft := rand.Intn(len(Peers.V))
 	var v *Peer
 	for _, peer := range Peers.V {
-		if countsLeft == 0 {
+		if countLeft == 0 {
 			v = peer
 			break
 		}
-		countsLeft--
+		countLeft--
 	}
 	return v
 }

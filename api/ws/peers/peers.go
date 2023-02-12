@@ -37,7 +37,7 @@ func (*TPeers) BroadcastRejectPeer(p *Peer) {
 }
 
 func (*TPeers) BroadcastNewTx() {
-
+	// send count of transaction
 }
 
 func (*TPeers) RequestBlocks(page int) {
