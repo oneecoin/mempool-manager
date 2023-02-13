@@ -12,5 +12,5 @@ type ExampleChainBlock struct {
 	PrevHash  string
 	Height    int
 	Nonce     int
-	Created   string
+	Created   int
 }

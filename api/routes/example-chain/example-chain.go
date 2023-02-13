@@ -46,7 +46,7 @@ func CreateBlock(c *gin.Context) {
 		return
 	}
 
-	block.Created = time.Now().Local().String()
+	block.Created = int(time.Now().Local().Unix())
 	exchain.AddBlock(block)
 	c.JSON(http.StatusCreated, block)
 }
