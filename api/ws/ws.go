@@ -22,7 +22,7 @@ var prs *peers.TPeers = peers.Peers
 func UpgradeWS(c *gin.Context) {
 
 	publicKey := c.Request.URL.Query().Get("publicKey")
-	port := c.Request.URL.Query().Get("port")
+	port := c.Query("port")
 	host := strings.Split(c.Request.RemoteAddr, ":")[0]
 	address := fmt.Sprintf("%s:%s", host, port)
 

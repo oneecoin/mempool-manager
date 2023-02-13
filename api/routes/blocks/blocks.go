@@ -10,11 +10,20 @@ import (
 var prs *peers.TPeers = peers.Peers
 
 func GetBlocks(c *gin.Context) {
-	bytes := prs.RequestBlocks(1)
+	var bq BlocksQuery
+	err := c.BindQuery(&bq)
+	if err != nil {
+		c.Status(http.StatusBadRequest)
+		return
+	}
+	bytes := prs.RequestBlocks(bq.Page)
+	// should add error handling. like 404
 	c.JSON(http.StatusOK, bytes)
 }
 
 func GetBlock(c *gin.Context) {
-	bytes := prs.RequestBlock("a")
+	hash := c.Param("hash")
+	bytes := prs.RequestBlock(hash)
+	// should add error handling. like 404
 	c.JSON(http.StatusOK, bytes)
 }
