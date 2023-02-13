@@ -37,6 +37,7 @@ func GetRoutes(router *gin.Engine) {
 		mp.POST("", transactions.CreateTransaction)
 
 		mp.GET("/:hash", transactions.GetTransaction)
+		mp.DELETE("/:hash", transactions.DeleteTransaction)
 	}
 
 	// example blockchain

@@ -8,8 +8,9 @@ import (
 type ITxService interface {
 	GetTxsForMining() *transaction_model.TxS
 	IsTxProcessing(txID string) bool
-	CreateTx() error
+	CreateTx(privateKey, targetAddress string, amount int) error
 	GetAllTxs() *transaction_model.TxS
+	GetTx(hash string) *transaction_model.Tx
 	DeleteTxs(txIDs []string)
 	TryDeleteTx(txID string) error
 }
