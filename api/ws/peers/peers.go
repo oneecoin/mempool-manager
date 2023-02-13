@@ -2,12 +2,10 @@ package peers
 
 import (
 	"encoding/json"
-	"fmt"
-	"io"
-	"net/http"
 	"sync"
 
 	"github.com/onee-only/mempool-manager/api/ws/messages"
+	"github.com/onee-only/mempool-manager/lib"
 )
 
 type TPeers struct {
@@ -45,40 +43,38 @@ func (*TPeers) BroadcastNewTx() {
 	// send count of transaction
 }
 
-func (*TPeers) RequestBlocks(page int) ([]byte, error) {
-	var res *http.Response
-	var err error
-	for {
-		peer := getRandomPeer()
-		res, err = http.Get(fmt.Sprintf("http://%s/blocks&page=%d", peer.GetAddress(), page))
-		if err == nil {
-			break
-		}
-	}
-	defer res.Body.Close()
-	b, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
-	return b, nil
+func (*TPeers) RequestBlocks(page int) []byte {
+	peer := getRandomPeer()
+
+	payload, err := json.Marshal(messages.PayloadPage{Page: page})
+	lib.HandleErr(err)
+
+	m, err := json.Marshal(messages.Message{
+		Kind:    messages.MessageBlocksRequest,
+		Payload: payload,
+	})
+	lib.HandleErr(err)
+
+	peer.Inbox <- m
+	block := <-peer.BlockInbox
+	return block
 }
 
-func (*TPeers) RequestBlock(hash string) ([]byte, error) {
-	var res *http.Response
-	var err error
-	for {
-		peer := getRandomPeer()
-		res, err = http.Get(fmt.Sprintf("http://%s/blocks/%s", peer.GetAddress(), hash))
-		if err == nil {
-			break
-		}
-	}
-	defer res.Body.Close()
-	b, err := io.ReadAll(res.Body)
-	if err != nil {
-		return nil, err
-	}
-	return b, nil
+func (*TPeers) RequestBlock(hash string) []byte {
+	peer := getRandomPeer()
+
+	payload, err := json.Marshal(messages.PayloadHash{Hash: hash})
+	lib.HandleErr(err)
+
+	m, err := json.Marshal(messages.Message{
+		Kind:    messages.MessageBlockRequest,
+		Payload: payload,
+	})
+	lib.HandleErr(err)
+
+	peer.Inbox <- m
+	block := <-peer.BlockInbox
+	return block
 }
 
 func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
@@ -103,5 +99,10 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 		}
 	case messages.MessageTxsRequest:
 		// retrieve transactions with coinbase transaction added
+
+	case messages.MessageBlocksResponse:
+		fallthrough
+	case messages.MessageBlockResponse:
+		p.BlockInbox <- m.Payload
 	}
 }

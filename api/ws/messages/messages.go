@@ -8,3 +8,11 @@ type Message struct {
 type PayloadPeer struct {
 	PeerAddress string
 }
+
+type PayloadPage struct {
+	Page int
+}
+
+type PayloadHash struct {
+	Hash string
+}

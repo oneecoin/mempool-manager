@@ -15,6 +15,7 @@ type TAddress struct {
 type Peer struct {
 	Conn        *websocket.Conn
 	Inbox       chan []byte
+	BlockInbox  chan []byte
 	RejectCount int
 	PublicKey   string
 	Address     TAddress

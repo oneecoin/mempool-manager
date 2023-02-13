@@ -53,6 +53,7 @@ func UpgradeWS(c *gin.Context) {
 	p := &peers.Peer{
 		Conn:        conn,
 		Inbox:       make(chan []byte),
+		BlockInbox:  make(chan []byte),
 		RejectCount: 0,
 		PublicKey:   publicKey,
 		Address: peers.TAddress{
