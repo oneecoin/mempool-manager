@@ -2,6 +2,7 @@ package transaction_model
 
 import (
 	"context"
+	"errors"
 
 	"github.com/onee-only/mempool-manager/db"
 	"github.com/onee-only/mempool-manager/lib"
@@ -11,8 +12,10 @@ import (
 type ITxModel interface {
 	GetAllTxs() *TxS
 	CreateTx(tx *Tx)
+	IsTxOccupied(txID string) bool
 	GetUnOccupiedTxs() *TxS
 	DeleteTxs(txIDs []string)
+	DeleteTx(txID string) error
 }
 
 type txModel struct{}
@@ -43,11 +46,11 @@ func (txModel) CreateTx(tx *Tx) {
 	txsMap.v[tx.ID] = false
 }
 
-func IsTxOccupied(txId string) bool {
+func (txModel) IsTxOccupied(txID string) bool {
 	txsMap := GetTxsOccupation()
 	txsMap.m.Lock()
 	defer txsMap.m.Unlock()
-	return txsMap.v[txId]
+	return txsMap.v[txID]
 }
 
 func (txModel) GetUnOccupiedTxs() *TxS {
@@ -87,4 +90,14 @@ func (txModel) DeleteTxs(txIDs []string) {
 	_, err := db.ExampleChain.DeleteMany(context.TODO(), filter)
 	lib.HandleErr(err)
 	deleteTxsOccupation(txIDs)
+}
+
+func (txModel) DeleteTx(txID string) error {
+	txsMap := GetTxsOccupation()
+	txsMap.m.Lock()
+	defer txsMap.m.Unlock()
+	if txsMap.v[txID] == true {
+		return errors.New("already taken")
+	}
+	return nil
 }
