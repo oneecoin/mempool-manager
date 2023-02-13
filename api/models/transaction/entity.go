@@ -12,14 +12,27 @@ type TxOut struct {
 	Amount    int    `json:"amount"`
 }
 
-type TxInS []*TxIn
-type TxOutS []*TxOut
-
 type Tx struct {
 	ID        string `json:"id"`
 	Timestamp int    `json:"timestamp"`
+	Occupied  bool   `json:"occupied"`
 	TxIns     TxInS  `json:"txIns"`
 	TxOuts    TxOutS `json:"txOuts"`
+}
+
+type TxInS []*TxIn
+type TxOutS []*TxOut
+type TxS []*Tx
+
+func (txs *TxS) String() string {
+	s := "["
+	for i, tx := range *txs {
+		if i > 0 {
+			s += ", "
+		}
+		s += fmt.Sprintf("%v", tx)
+	}
+	return s + "]"
 }
 
 func (txIns *TxInS) String() string {
