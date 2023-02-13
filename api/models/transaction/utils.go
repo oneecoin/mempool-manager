@@ -6,6 +6,7 @@ import (
 	"github.com/onee-only/mempool-manager/db"
 	"github.com/onee-only/mempool-manager/lib"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -50,4 +51,15 @@ func occupyTxs(txIDs []string) {
 	for _, txID := range txIDs {
 		txsMap[txID] = true
 	}
+}
+
+func createFilterByTxIDs(txIDs []string) primitive.D {
+	var arr bson.A
+	for _, txID := range txIDs {
+		arr = append(arr, bson.M{"ID": txID})
+	}
+
+	return bson.D{{
+		"$or", arr,
+	}}
 }

@@ -5,12 +5,11 @@ import (
 
 	"github.com/onee-only/mempool-manager/db"
 	"github.com/onee-only/mempool-manager/lib"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ITxModel interface {
 	GetAllTxs() *TxS
-	CreateTx() *Tx
+	CreateTx(tx *Tx)
 	GetUnOccupiedTxs() *TxS
 	DeleteTxs(txIDs []string)
 }
@@ -27,8 +26,8 @@ func (txModel) GetAllTxs() *TxS {
 
 }
 
-func (txModel) CreateTx() *Tx {
-
+func (txModel) CreateTx(tx *Tx) {
+	
 }
 
 func (txModel) GetUnOccupiedTxs() *TxS {
@@ -43,17 +42,13 @@ func (txModel) GetUnOccupiedTxs() *TxS {
 			break
 		}
 	}
+	if len(txIDs) == 0 {
+		return nil
+	}
 
 	var txs *TxS
 
-	var arr bson.A
-	for _, txID := range txIDs {
-		arr = append(arr, bson.M{"ID": txID})
-	}
-
-	filter := bson.D{{
-		"$or", arr,
-	}}
+	filter := createFilterByTxIDs(txIDs)
 
 	cursor, err := db.Transactions.Find(context.TODO(), filter)
 	lib.HandleErr(err)
