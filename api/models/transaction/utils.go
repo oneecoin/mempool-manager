@@ -2,6 +2,7 @@ package transaction_model
 
 import (
 	"context"
+	"sync"
 
 	"github.com/onee-only/mempool-manager/db"
 	"github.com/onee-only/mempool-manager/lib"
@@ -14,18 +15,26 @@ type txIDsResult struct {
 	ID string
 }
 
-var txsOccupation map[string]bool
+type txsOccupationMap struct {
+	v map[string]bool
+	m sync.Mutex
+}
 
-func GetTxsOccupation() map[string]bool {
-	if txsOccupation == nil {
+var txsOccupation txsOccupationMap = txsOccupationMap{
+	v: make(map[string]bool),
+	m: sync.Mutex{},
+}
+
+func GetTxsOccupation() txsOccupationMap {
+	if txsOccupation.v == nil {
+		txsOccupation.m.Lock()
+		defer txsOccupation.m.Lock()
 		initTxsOccupation()
 	}
 	return txsOccupation
 }
 
 func initTxsOccupation() {
-	txsOccupation = make(map[string]bool)
-
 	opts := options.Find().SetProjection(bson.D{{"ID", 1}})
 
 	results := []txIDsResult{}
@@ -35,21 +44,25 @@ func initTxsOccupation() {
 	cursor.All(context.TODO(), &results)
 
 	for _, result := range results {
-		txsOccupation[result.ID] = false
+		txsOccupation.v[result.ID] = false
 	}
 }
 
 func deleteTxsOccupation(txIDs []string) {
 	txsMap := GetTxsOccupation()
+	txsMap.m.Lock()
+	defer txsMap.m.Unlock()
 	for _, txID := range txIDs {
-		delete(txsMap, txID)
+		delete(txsMap.v, txID)
 	}
 }
 
 func occupyTxs(txIDs []string) {
 	txsMap := GetTxsOccupation()
+	txsMap.m.Lock()
+	defer txsMap.m.Unlock()
 	for _, txID := range txIDs {
-		txsMap[txID] = true
+		txsMap.v[txID] = true
 	}
 }
 

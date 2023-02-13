@@ -27,13 +27,16 @@ func (txModel) GetAllTxs() *TxS {
 }
 
 func (txModel) CreateTx(tx *Tx) {
-	
+
 }
 
 func (txModel) GetUnOccupiedTxs() *TxS {
 	count := 0
 	var txIDs []string
-	for txID, occupied := range GetTxsOccupation() {
+	txsMap := GetTxsOccupation()
+	txsMap.m.Lock()
+	defer txsMap.m.Unlock()
+	for txID, occupied := range txsMap.v {
 		if !occupied {
 			txIDs = append(txIDs, txID)
 			count++
@@ -60,6 +63,8 @@ func (txModel) GetUnOccupiedTxs() *TxS {
 }
 
 func (txModel) DeleteTxs(txIDs []string) {
-
+	filter := createFilterByTxIDs(txIDs)
+	_, err := db.ExampleChain.DeleteMany(context.TODO(), filter)
+	lib.HandleErr(err)
 	deleteTxsOccupation(txIDs)
 }
