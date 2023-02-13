@@ -6,11 +6,11 @@ type ExampleChain struct {
 }
 
 type ExampleChainBlock struct {
-	Data      string
-	PublicKey string
-	Hash      string
-	PrevHash  string
-	Height    int
-	Nonce     int
-	Created   int
+	Data      string `json:"data"`
+	PublicKey string `json:"publicKey"`
+	Hash      string `json:"hash"`
+	PrevHash  string `json:"prevHash"`
+	Height    int    `json:"height"`
+	Nonce     int    `json:"nonce"`
+	Created   int    `json:"created"`
 }
