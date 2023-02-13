@@ -5,6 +5,7 @@ import (
 
 	"github.com/onee-only/mempool-manager/db"
 	"github.com/onee-only/mempool-manager/lib"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 type ITxModel interface {
@@ -23,11 +24,25 @@ const (
 var TxModel ITxModel = txModel{}
 
 func (txModel) GetAllTxs() *TxS {
+	var txs *TxS
 
+	cursor, err := db.Transactions.Find(context.TODO(), bson.D{})
+	lib.HandleErr(err)
+	err = cursor.All(context.TODO(), txs)
+	lib.HandleErr(err)
+
+	return txs
 }
 
 func (txModel) CreateTx(tx *Tx) {
 
+}
+
+func IsTxOccupied(txId string) bool {
+	txsMap := GetTxsOccupation()
+	txsMap.m.Lock()
+	defer txsMap.m.Unlock()
+	return txsMap.v[txId]
 }
 
 func (txModel) GetUnOccupiedTxs() *TxS {
