@@ -15,7 +15,6 @@ type TxOut struct {
 type Tx struct {
 	ID        string `json:"id"`
 	Timestamp int    `json:"timestamp"`
-	Occupied  bool   `json:"occupied"`
 	TxIns     TxInS  `json:"txIns"`
 	TxOuts    TxOutS `json:"txOuts"`
 }
