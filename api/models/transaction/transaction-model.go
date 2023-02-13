@@ -35,7 +35,12 @@ func (txModel) GetAllTxs() *TxS {
 }
 
 func (txModel) CreateTx(tx *Tx) {
-
+	_, err := db.Transactions.InsertOne(context.TODO(), tx)
+	lib.HandleErr(err)
+	txsMap := GetTxsOccupation()
+	txsMap.m.Lock()
+	defer txsMap.m.Unlock()
+	txsMap.v[tx.ID] = false
 }
 
 func IsTxOccupied(txId string) bool {

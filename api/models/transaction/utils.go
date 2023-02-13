@@ -25,17 +25,17 @@ var txsOccupation txsOccupationMap = txsOccupationMap{
 	m: sync.Mutex{},
 }
 
-func GetTxsOccupation() txsOccupationMap {
+func GetTxsOccupation() *txsOccupationMap {
 	if txsOccupation.v == nil {
 		txsOccupation.m.Lock()
 		defer txsOccupation.m.Lock()
 		initTxsOccupation()
 	}
-	return txsOccupation
+	return &txsOccupation
 }
 
 func initTxsOccupation() {
-	opts := options.Find().SetProjection(bson.D{{"ID", 1}})
+	opts := options.Find().SetProjection(bson.D{{Key: "ID", Value: 1}})
 
 	results := []txIDsResult{}
 	cursor, err := db.Transactions.Find(context.TODO(), bson.D{}, opts)
@@ -73,6 +73,6 @@ func createFilterByTxIDs(txIDs []string) primitive.D {
 	}
 
 	return bson.D{{
-		"$or", arr,
+		Key: "$or", Value: arr,
 	}}
 }
