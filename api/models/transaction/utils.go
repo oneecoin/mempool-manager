@@ -13,10 +13,17 @@ type txIDsResult struct {
 	ID string
 }
 
-var TxsOccupation map[string]bool
+var txsOccupation map[string]bool
 
-func InitTxsOccupation() map[string]bool {
-	txsOccupation := make(map[string]bool)
+func GetTxsOccupation() map[string]bool {
+	if txsOccupation == nil {
+		initTxsOccupation()
+	}
+	return txsOccupation
+}
+
+func initTxsOccupation() {
+	txsOccupation = make(map[string]bool)
 
 	opts := options.Find().SetProjection(bson.D{{"ID", 1}})
 
@@ -29,6 +36,18 @@ func InitTxsOccupation() map[string]bool {
 	for _, result := range results {
 		txsOccupation[result.ID] = false
 	}
+}
 
-	return txsOccupation
+func deleteTxsOccupation(txIDs []string) {
+	txsMap := GetTxsOccupation()
+	for _, txID := range txIDs {
+		delete(txsMap, txID)
+	}
+}
+
+func occupyTxs(txIDs []string) {
+	txsMap := GetTxsOccupation()
+	for _, txID := range txIDs {
+		txsMap[txID] = true
+	}
 }
