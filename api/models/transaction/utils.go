@@ -15,6 +15,12 @@ type txIDsResult struct {
 	ID string
 }
 
+type txInsAmountResult struct {
+	TxOuts []struct {
+		Amount int
+	}
+}
+
 type txsOccupationMap struct {
 	v map[string]bool
 	m sync.Mutex
@@ -74,5 +80,11 @@ func createFilterByTxIDs(txIDs []string) primitive.D {
 
 	return bson.D{{
 		Key: "$or", Value: arr,
+	}}
+}
+
+func createFilterByTxInsFrom(publicKey string) primitive.D {
+	return bson.D{{
+		Key: "TxIns.From", Value: publicKey,
 	}}
 }

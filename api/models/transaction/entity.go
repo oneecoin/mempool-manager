@@ -19,7 +19,10 @@ type Tx struct {
 	TxOuts    TxOutS `json:"txOuts"`
 }
 
-type TxInS []*TxIn
+type TxInS struct {
+	From string  `json:"from"`
+	V    []*TxIn `json:"v"`
+}
 type TxOutS []*TxOut
 type TxS []*Tx
 
@@ -35,8 +38,9 @@ func (txs *TxS) String() string {
 }
 
 func (txIns *TxInS) String() string {
-	s := "["
-	for i, txIn := range *txIns {
+	s := "From: " + txIns.From
+	s = ", V: ["
+	for i, txIn := range txIns.V {
 		if i > 0 {
 			s += ", "
 		}

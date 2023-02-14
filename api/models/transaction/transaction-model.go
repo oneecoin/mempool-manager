@@ -7,6 +7,7 @@ import (
 	"github.com/onee-only/mempool-manager/db"
 	"github.com/onee-only/mempool-manager/lib"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 type ITxModel interface {
@@ -16,6 +17,8 @@ type ITxModel interface {
 	GetUnOccupiedTxs() *TxS
 	DeleteTxs(txIDs []string)
 	DeleteTx(txID string) error
+	GetSpentBalanceAmount(fromPublicKey string) int
+	GetTxByTxID(txID string) *Tx
 }
 
 type txModel struct{}
@@ -96,8 +99,26 @@ func (txModel) DeleteTx(txID string) error {
 	txsMap := GetTxsOccupation()
 	txsMap.m.Lock()
 	defer txsMap.m.Unlock()
-	if txsMap.v[txID] == true {
+	if txsMap.v[txID] {
 		return errors.New("already taken")
 	}
 	return nil
+}
+
+func (txModel) GetSpentBalanceAmount(fromPublicKey string) int {
+
+	filter := createFilterByTxInsFrom(fromPublicKey)
+	opts := options.Find().SetProjection(bson.D{{Key: "TxOuts.Amount", Value: 1}})
+	cursor, err := db.Transactions.Find(context.TODO(), filter, opts)
+	lib.HandleErr(err)
+
+	var result txInsAmountResult
+	err = cursor.All(context.TODO(), &result)
+	lib.HandleErr(err)
+
+	amount := 0
+	for _, txOut := range result.TxOuts {
+		amount += txOut.Amount
+	}
+	return amount
 }
