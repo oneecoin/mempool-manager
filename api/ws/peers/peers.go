@@ -77,6 +77,10 @@ func (*TPeers) RequestBlock(hash string) []byte {
 	return block
 }
 
+func (*TPeers) GetUnSpentTxOuts(fromPublicKey string, amount int) {
+
+}
+
 func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 	switch m.Kind {
 	case messages.MessageRejectPeer:

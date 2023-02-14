@@ -88,7 +88,15 @@ func (txModel) GetTxsForMining(minerPublicKey string) *TxS {
 	return txs
 }
 
-func (txModel) DeleteTxs(txIDs []string) {
+func (txModel) DeleteTxs(minerPublicKey string) {
+	txIDs := []string{}
+
+	for txID, minerPK := range GetTxsOccupation().v {
+		if minerPK == minerPublicKey {
+			txIDs = append(txIDs, txID)
+		}
+	}
+
 	filter := createFilterByTxIDs(txIDs)
 	_, err := db.ExampleChain.DeleteMany(context.TODO(), filter)
 	lib.HandleErr(err)

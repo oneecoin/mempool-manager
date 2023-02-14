@@ -15,7 +15,7 @@ type ITxService interface {
 	CreateTx(privateKey, targetAddress string, amount int) error
 	GetAllTxs() *transaction_model.TxS
 	GetTx(hash string) *transaction_model.Tx
-	DeleteTxs(txIDs []string)
+	DeleteTxs(minerPublicKey string)
 	TryDeleteTx(txID string) error
 }
 
@@ -41,7 +41,7 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 		return err
 	}
 
-	unSpentTxOuts := miners.GetUnSpentTxOuts(fromPublicKey)
+	unSpentTxOuts := miners.GetUnSpentTxOuts(fromPublicKey, amount)
 
 	balance := getBalanceFromUTxouts(unSpentTxOuts)
 	balance -= transactions.GetSpentBalanceAmount(fromPublicKey)
@@ -79,8 +79,8 @@ func (txService) GetTx(txID string) *transaction_model.Tx {
 	return transactions.GetTxByTxID(txID)
 }
 
-func (txService) DeleteTxs(txIDs []string) {
-	transactions.DeleteTxs(txIDs)
+func (txService) DeleteTxs(minerPublicKey string) {
+	transactions.DeleteTxs(minerPublicKey)
 }
 
 func (txService) TryDeleteTx(txID string) error {
