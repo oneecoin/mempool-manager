@@ -22,12 +22,12 @@ type txInsAmountResult struct {
 }
 
 type txsOccupationMap struct {
-	v map[string]bool
+	v map[string]string
 	m sync.Mutex
 }
 
 var txsOccupation txsOccupationMap = txsOccupationMap{
-	v: make(map[string]bool),
+	v: make(map[string]string),
 	m: sync.Mutex{},
 }
 
@@ -50,7 +50,7 @@ func initTxsOccupation() {
 	cursor.All(context.TODO(), &results)
 
 	for _, result := range results {
-		txsOccupation.v[result.ID] = false
+		txsOccupation.v[result.ID] = ""
 	}
 }
 
@@ -63,12 +63,12 @@ func deleteTxsOccupation(txIDs []string) {
 	}
 }
 
-func occupyTxs(txIDs []string) {
+func occupyTxs(txIDs []string, minerPublicKey string) {
 	txsMap := GetTxsOccupation()
 	txsMap.m.Lock()
 	defer txsMap.m.Unlock()
 	for _, txID := range txIDs {
-		txsMap.v[txID] = true
+		txsMap.v[txID] = minerPublicKey
 	}
 }
 

@@ -14,7 +14,7 @@ type ITxModel interface {
 	GetAllTxs() *TxS
 	CreateTx(tx *Tx)
 	IsTxOccupied(txID string) bool
-	GetUnOccupiedTxs() *TxS
+	GetTxsForMining(minerPublicKey string) *TxS
 	DeleteTxs(txIDs []string)
 	DeleteTx(txID string) error
 	GetSpentBalanceAmount(fromPublicKey string) int
@@ -46,24 +46,24 @@ func (txModel) CreateTx(tx *Tx) {
 	txsMap := GetTxsOccupation()
 	txsMap.m.Lock()
 	defer txsMap.m.Unlock()
-	txsMap.v[tx.ID] = false
+	txsMap.v[tx.ID] = ""
 }
 
 func (txModel) IsTxOccupied(txID string) bool {
 	txsMap := GetTxsOccupation()
 	txsMap.m.Lock()
 	defer txsMap.m.Unlock()
-	return txsMap.v[txID]
+	return txsMap.v[txID] != ""
 }
 
-func (txModel) GetUnOccupiedTxs() *TxS {
+func (txModel) GetTxsForMining(minerPublicKey string) *TxS {
 	count := 0
 	var txIDs []string
 	txsMap := GetTxsOccupation()
 	txsMap.m.Lock()
 	defer txsMap.m.Unlock()
-	for txID, occupied := range txsMap.v {
-		if !occupied {
+	for txID, publicKey := range txsMap.v {
+		if publicKey == "" {
 			txIDs = append(txIDs, txID)
 			count++
 		}
@@ -84,7 +84,7 @@ func (txModel) GetUnOccupiedTxs() *TxS {
 
 	cursor.All(context.TODO(), txs)
 
-	occupyTxs(txIDs)
+	occupyTxs(txIDs, minerPublicKey)
 	return txs
 }
 
@@ -99,9 +99,11 @@ func (txModel) DeleteTx(txID string) error {
 	txsMap := GetTxsOccupation()
 	txsMap.m.Lock()
 	defer txsMap.m.Unlock()
-	if txsMap.v[txID] {
+	if publicKey := txsMap.v[txID]; publicKey != "" {
 		return errors.New("already taken")
 	}
+	_, err := db.Transactions.DeleteOne(context.TODO(), bson.D{{Key: "ID", Value: txID}})
+	lib.HandleErr(err)
 	return nil
 }
 
@@ -121,4 +123,12 @@ func (txModel) GetSpentBalanceAmount(fromPublicKey string) int {
 		amount += txOut.Amount
 	}
 	return amount
+}
+
+func (txModel) GetTxByTxID(txID string) *Tx {
+	var tx *Tx
+	cursor := db.Transactions.FindOne(context.TODO(), bson.D{{Key: "ID", Value: txID}})
+	err := cursor.Decode(tx)
+	lib.HandleErr(err)
+	return tx
 }

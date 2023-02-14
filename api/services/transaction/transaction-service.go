@@ -10,7 +10,7 @@ import (
 )
 
 type ITxService interface {
-	GetTxsForMining() *transaction_model.TxS
+	GetTxsForMining(minerPublicKey string) *transaction_model.TxS
 	IsTxProcessing(txID string) bool
 	CreateTx(privateKey, targetAddress string, amount int) error
 	GetAllTxs() *transaction_model.TxS
@@ -26,8 +26,8 @@ var transactions transaction_model.ITxModel = transaction_model.TxModel
 var wallets wallet_model.IWalletModel = wallet_model.WalletModel
 var TxService ITxService = txService{}
 
-func (txService) GetTxsForMining() *transaction_model.TxS {
-	return transactions.GetUnOccupiedTxs()
+func (txService) GetTxsForMining(minerPublicKey string) *transaction_model.TxS {
+	return transactions.GetTxsForMining(minerPublicKey)
 }
 
 func (txService) IsTxProcessing(txID string) bool {
