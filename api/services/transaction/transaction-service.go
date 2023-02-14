@@ -36,10 +36,12 @@ func (txService) IsTxProcessing(txID string) bool {
 
 func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 
-	fromPublicKey, err := wallets.GetPublicFromPrivate(privateKey)
+	privKeyObj, err := wallets.GetPrivKeyObjFromString(privateKey)
 	if err != nil {
 		return err
 	}
+
+	fromPublicKey := wallets.GetPublicFromPrivate(privKeyObj)
 
 	spent := transactions.GetSpentBalanceAmount(fromPublicKey)
 	unSpentTxOuts, available := miners.GetUnSpentTxOuts(fromPublicKey, amount+spent)

@@ -16,7 +16,8 @@ type IWalletModel interface {
 	MakePublicKey(key *ecdsa.PrivateKey) string
 	EncodePublicKey(publicKey string) (*big.Int, *big.Int, error)
 	RestoreWallet(publicKey string, privateKey string) (*Wallet, error)
-	GetPublicFromPrivate(privateKey string) (string, error)
+	GetPublicFromPrivate(privateKey *ecdsa.PrivateKey) string
+	GetPrivKeyObjFromString(privateKey string) (*ecdsa.PrivateKey, error)
 }
 
 type walletModel struct{}
@@ -52,14 +53,27 @@ func (walletModel) RestoreWallet(publicKey string, privateKey string) (*Wallet, 
 	return wallet, nil
 }
 
-func (walletModel) GetPublicFromPrivate(privateKey string) (string, error) {
+func (walletModel) GetPrivKeyObjFromString(privateKey string) (*ecdsa.PrivateKey, error) {
 	privKeyBytes, err := hex.DecodeString(privateKey)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	privKeyObj, err := x509.ParseECPrivateKey(privKeyBytes)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
-	return WalletModel.MakePublicKey(privKeyObj), nil
+	return privKeyObj, nil
+}
+
+func (walletModel) GetPublicFromPrivate(privateKey *ecdsa.PrivateKey) string {
+	return WalletModel.MakePublicKey(privateKey)
+}
+
+func (walletModel) Sign(privateKey *ecdsa.PrivateKey, payload string) string {
+	payloadBytes, err := hex.DecodeString(payload)
+	lib.HandleErr(err)
+	r, s, err := ecdsa.Sign(rand.Reader, privateKey, payloadBytes)
+	lib.HandleErr(err)
+	signature := encodeBigInts(r.Bytes(), s.Bytes())
+	return signature
 }
