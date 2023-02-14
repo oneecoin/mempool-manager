@@ -15,7 +15,7 @@ type ITxModel interface {
 	CreateTx(tx *Tx)
 	IsTxOccupied(txID string) bool
 	GetTxsForMining(minerPublicKey string) *TxS
-	DeleteTxs(txIDs []string)
+	DeleteTxs(minerPublicKey string)
 	DeleteTx(txID string) error
 	GetSpentBalanceAmount(fromPublicKey string) int
 	GetTxByTxID(txID string) *Tx

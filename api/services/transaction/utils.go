@@ -7,7 +7,7 @@ import (
 	transaction_model "github.com/onee-only/mempool-manager/api/models/transaction"
 )
 
-func getBalanceFromUTxouts(unSpentTxOuts) int {
+func getAmountFromUTxouts(unSpentTxOuts) int {
 
 	return
 }
