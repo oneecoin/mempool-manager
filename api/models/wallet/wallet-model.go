@@ -18,6 +18,7 @@ type IWalletModel interface {
 	RestoreWallet(publicKey string, privateKey string) (*Wallet, error)
 	GetPublicFromPrivate(privateKey *ecdsa.PrivateKey) string
 	GetPrivKeyObjFromString(privateKey string) (*ecdsa.PrivateKey, error)
+	Sign(privateKey *ecdsa.PrivateKey, payload string) string
 }
 
 type walletModel struct{}

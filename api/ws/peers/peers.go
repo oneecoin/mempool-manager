@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"sync"
 
+	transaction_model "github.com/onee-only/mempool-manager/api/models/transaction"
 	"github.com/onee-only/mempool-manager/api/ws/messages"
 	"github.com/onee-only/mempool-manager/lib"
 )
@@ -77,8 +78,25 @@ func (*TPeers) RequestBlock(hash string) []byte {
 	return block
 }
 
-func (*TPeers) GetUnSpentTxOuts(fromPublicKey string, amount int) {
+func (*TPeers) GetUnSpentTxOuts(fromPublicKey string, amount int) (*transaction_model.UTxOutS, bool) {
+	peer := getRandomPeer()
 
+	payload, err := json.Marshal(messages.PayloadUTxOutsFilter{
+		PublicKey: fromPublicKey,
+		Amount:    amount,
+	})
+	lib.HandleErr(err)
+
+	m, err := json.Marshal(messages.Message{
+		Kind:    messages.MessageUTxOutsRequest,
+		Payload: payload,
+	})
+	lib.HandleErr(err)
+
+	peer.Inbox <- m
+
+	uTxOuts := <-peer.UTxOutsInbox
+	return &uTxOuts.UTxOuts, uTxOuts.Available
 }
 
 func (*TPeers) handleMessage(m *messages.Message, p *Peer) {

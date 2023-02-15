@@ -16,7 +16,7 @@ type Peer struct {
 	Conn         *websocket.Conn
 	Inbox        chan []byte
 	BlockInbox   chan []byte
-	UTxOutsInbox chan []byte
+	UTxOutsInbox chan messages.PayloadUTxOuts
 	RejectCount  int
 	PublicKey    string
 	Address      TAddress

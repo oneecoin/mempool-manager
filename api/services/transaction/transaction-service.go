@@ -53,8 +53,19 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 
 	change := inputAmount - amount
 
-	txIns := transaction_model.TxInS{}
+	txIns := transaction_model.TxInS{From: fromPublicKey}
 	txOuts := transaction_model.TxOutS{}
+
+	for _, uTxOut := range *unSpentTxOuts {
+		txIns.V = append(txIns.V, &transaction_model.TxIn{
+			TxID:  uTxOut.TxID,
+			Index: uTxOut.Index,
+		})
+	}
+
+	for _, txIn := range txIns.V {
+		txIn.Signature = wallets.Sign(privKeyObj, txIn.TxID)
+	}
 
 	if change != 0 {
 		txOuts = append(txOuts, &transaction_model.TxOut{

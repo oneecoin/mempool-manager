@@ -10,11 +10,13 @@ const (
 	// responses from miner
 	MessageBlocksResponse
 	MessageBlockResponse
+	MessageUTxOutsResponse
 
 	// requests from mempool
 	MessageNewPeer
 	MessageBlocksRequest
 	MessageBlockRequest
+	MessageUTxOutsRequest
 
 	// responses from mempool
 	MessageTxsResponse
