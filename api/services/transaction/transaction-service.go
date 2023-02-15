@@ -10,7 +10,6 @@ import (
 )
 
 type ITxService interface {
-	GetTxsForMining(minerPublicKey string) *transaction_model.TxS
 	IsTxProcessing(txID string) bool
 	CreateTx(privateKey, targetAddress string, amount int) error
 	GetAllTxs() *transaction_model.TxS
@@ -25,10 +24,6 @@ var miners *peers.TPeers = peers.Peers
 var transactions transaction_model.ITxModel = transaction_model.TxModel
 var wallets wallet_model.IWalletModel = wallet_model.WalletModel
 var TxService ITxService = txService{}
-
-func (txService) GetTxsForMining(minerPublicKey string) *transaction_model.TxS {
-	return transactions.GetTxsForMining(minerPublicKey)
-}
 
 func (txService) IsTxProcessing(txID string) bool {
 	return transactions.IsTxOccupied(txID)
@@ -58,13 +53,10 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 
 	for _, uTxOut := range *unSpentTxOuts {
 		txIns.V = append(txIns.V, &transaction_model.TxIn{
-			TxID:  uTxOut.TxID,
-			Index: uTxOut.Index,
+			TxID:      uTxOut.TxID,
+			Index:     uTxOut.Index,
+			Signature: wallets.Sign(privKeyObj, uTxOut.TxID),
 		})
-	}
-
-	for _, txIn := range txIns.V {
-		txIn.Signature = wallets.Sign(privKeyObj, txIn.TxID)
 	}
 
 	if change != 0 {

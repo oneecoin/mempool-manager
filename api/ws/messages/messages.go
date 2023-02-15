@@ -28,3 +28,7 @@ type PayloadUTxOuts struct {
 	Available bool
 	UTxOuts   transaction_model.UTxOutS
 }
+
+type PayloadTxs struct {
+	Txs transaction_model.TxS
+}

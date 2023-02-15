@@ -18,6 +18,7 @@ var Peers *TPeers = &TPeers{
 	V: make(map[string]*Peer),
 	M: sync.Mutex{},
 }
+var transactions transaction_model.ITxModel = transaction_model.TxModel
 
 func (*TPeers) InitPeer(p *Peer) {
 	Peers.M.Lock()
@@ -38,10 +39,6 @@ func (*TPeers) BroadcastRejectPeer(p *Peer) {
 	for _, peer := range Peers.V {
 		peer.Inbox <- m
 	}
-}
-
-func (*TPeers) BroadcastNewTx() {
-	// send count of transaction
 }
 
 func (*TPeers) RequestBlocks(page int) []byte {
@@ -120,11 +117,29 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 			}
 		}
 	case messages.MessageTxsRequest:
-		// retrieve transactions with coinbase transaction added
+		txs := transactions.GetTxsForMining(p.PublicKey)
+
+		payload, err := json.Marshal(messages.PayloadTxs{
+			Txs: *txs,
+		})
+		lib.HandleErr(err)
+
+		m, err := json.Marshal(messages.Message{
+			Kind:    messages.MessageTxsResponse,
+			Payload: payload,
+		})
+		lib.HandleErr(err)
+
+		p.Inbox <- m
 
 	case messages.MessageBlocksResponse:
 		fallthrough
 	case messages.MessageBlockResponse:
 		p.BlockInbox <- m.Payload
+	case messages.MessageUTxOutsResponse:
+		data := messages.PayloadUTxOuts{}
+		err := json.Unmarshal(m.Payload, &data)
+		lib.HandleErr(err)
+		p.UTxOutsInbox <- data
 	}
 }
