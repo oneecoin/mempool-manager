@@ -13,12 +13,13 @@ type TAddress struct {
 }
 
 type Peer struct {
-	Conn        *websocket.Conn
-	Inbox       chan []byte
-	BlockInbox  chan []byte
-	RejectCount int
-	PublicKey   string
-	Address     TAddress
+	Conn         *websocket.Conn
+	Inbox        chan []byte
+	BlockInbox   chan []byte
+	UTxOutsInbox chan []byte
+	RejectCount  int
+	PublicKey    string
+	Address      TAddress
 }
 
 func (p Peer) GetAddress() string {

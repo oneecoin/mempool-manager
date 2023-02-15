@@ -12,6 +12,12 @@ type TxOut struct {
 	Amount    int    `json:"amount"`
 }
 
+type UTxOut struct {
+	TxID   string `json:"txId"`
+	Index  int    `json:"index"`
+	Amount int    `json:"amount"`
+}
+
 type Tx struct {
 	ID        string `json:"id"`
 	Timestamp int    `json:"timestamp"`
@@ -24,6 +30,7 @@ type TxInS struct {
 	V    []*TxIn `json:"v"`
 }
 type TxOutS []*TxOut
+type UTxOutS []*UTxOut
 type TxS []*Tx
 
 func (txs *TxS) String() string {
@@ -37,9 +44,20 @@ func (txs *TxS) String() string {
 	return s + "]"
 }
 
+func (uTxOuts *UTxOutS) String() string {
+	s := "["
+	for i, uTxOut := range *uTxOuts {
+		if i > 0 {
+			s += ", "
+		}
+		s += fmt.Sprintf("%v", uTxOut)
+	}
+	return s + "]"
+}
+
 func (txIns *TxInS) String() string {
 	s := "From: " + txIns.From
-	s = ", V: ["
+	s += ", V: ["
 	for i, txIn := range txIns.V {
 		if i > 0 {
 			s += ", "
