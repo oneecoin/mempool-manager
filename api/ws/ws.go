@@ -28,7 +28,7 @@ func UpgradeWS(c *gin.Context) {
 
 	wsUpgrader.CheckOrigin = func(r *http.Request) bool {
 		// send http request to the address
-		res, err := http.Get("http://" + address)
+		res, err := http.Get("http://" + address + "/check")
 		if err != nil {
 			return false
 		}
