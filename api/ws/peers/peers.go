@@ -28,14 +28,16 @@ func (*TPeers) InitPeer(p *Peer) {
 	Peers.V[p.GetAddress()] = p
 }
 
-func (*TPeers) BroadcastNewPeer(p *Peer) {
-	m := marshalPeerMessage(p, messages.MessageNewPeer)
-	for _, peer := range Peers.V {
-		peer.Inbox <- m
-	}
-}
 func (*TPeers) BroadcastRejectPeer(p *Peer) {
-	m := marshalPeerMessage(p, messages.MessagePeerRejected)
+	payload, err := json.Marshal(messages.PayloadPeer{
+		PeerAddress: p.GetAddress(),
+	})
+	lib.HandleErr(err)
+	m, err := json.Marshal(messages.Message{
+		Kind:    messages.MessagePeerRejected,
+		Payload: payload,
+	})
+	lib.HandleErr(err)
 	for _, peer := range Peers.V {
 		peer.Inbox <- m
 	}
@@ -94,6 +96,16 @@ func (*TPeers) GetUnSpentTxOuts(fromPublicKey string, amount int) (*transaction_
 
 	uTxOuts := <-peer.UTxOutsInbox
 	return &uTxOuts.UTxOuts, uTxOuts.Available
+}
+
+func (*TPeers) GetAllPeers() *[]string {
+	var peerList []string
+	Peers.M.Lock()
+	defer Peers.M.Unlock()
+	for address, _ := range Peers.V {
+		peerList = append(peerList, address)
+	}
+	return &peerList
 }
 
 func (*TPeers) handleMessage(m *messages.Message, p *Peer) {

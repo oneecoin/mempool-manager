@@ -13,7 +13,6 @@ const (
 	MessageUTxOutsResponse
 
 	// requests from mempool
-	MessageNewPeer
 	MessageBlocksRequest
 	MessageBlockRequest
 	MessageUTxOutsRequest
