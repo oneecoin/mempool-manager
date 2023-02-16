@@ -14,6 +14,13 @@ func GetRoutes(router *gin.Engine) {
 	// websocket upgrade
 	router.GET("/ws", ws.UpgradeWS)
 
+	// peers
+	p := router.Group("/peers")
+	{
+		p.GET("", ws.GetPeers)
+		p.GET("/count", ws.GetPeersCount)
+	}
+
 	// wallets
 	w := router.Group("/wallets")
 	{

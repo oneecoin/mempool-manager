@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -23,7 +22,7 @@ func UpgradeWS(c *gin.Context) {
 
 	publicKey := c.Query("publicKey")
 	port := c.Query("port")
-	host := strings.Split(c.Request.RemoteAddr, ":")[0]
+	host := c.ClientIP()
 	address := fmt.Sprintf("%s:%s", host, port)
 
 	wsUpgrader.CheckOrigin = func(r *http.Request) bool {
@@ -64,6 +63,26 @@ func UpgradeWS(c *gin.Context) {
 
 	// add this connection to peers map
 	prs.InitPeer(p)
+}
+
+func GetPeersCount(c *gin.Context) {
+	count := len(prs.V)
+	c.JSON(http.StatusOK, struct {
+		Count int `json:"count"`
+	}{
+		Count: count,
+	})
+}
+
+func GetPeers(c *gin.Context) {
+
+	host := c.ClientIP()
+	port := c.Query("port")
+	if _, exists := prs.V[fmt.Sprintf("%s:%s", host, port)]; !exists {
+		c.Status(http.StatusUnauthorized)
+		return
+	}
+
 	peerList := prs.GetAllPeers()
 	c.JSON(http.StatusOK, peerList)
 }
