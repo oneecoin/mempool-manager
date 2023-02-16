@@ -65,4 +65,7 @@ func UpgradeWS(c *gin.Context) {
 	// add this connection to peers map
 	prs.BroadcastNewPeer(p)
 	prs.InitPeer(p)
+	c.JSON(http.StatusOK, struct{ PeersCount int }{
+		PeersCount: len(prs.V),
+	})
 }
