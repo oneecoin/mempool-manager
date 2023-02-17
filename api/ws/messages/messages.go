@@ -32,3 +32,7 @@ type PayloadUTxOuts struct {
 type PayloadTxs struct {
 	Txs transaction_model.TxS
 }
+
+type PayloadCount struct {
+	Count int
+}

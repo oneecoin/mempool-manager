@@ -14,7 +14,7 @@ type ITxModel interface {
 	GetAllTxs() *TxS
 	CreateTx(tx *Tx)
 	IsTxOccupied(txID string) bool
-	GetTxsForMining(minerPublicKey string) *TxS
+	GetTxsForMining(minerPublicKey string, minCount int) *TxS
 	DeleteTxs(minerPublicKey string)
 	DeleteTx(txID string) error
 	GetSpentBalanceAmount(fromPublicKey string) int
@@ -56,7 +56,7 @@ func (txModel) IsTxOccupied(txID string) bool {
 	return txsMap.v[txID] != ""
 }
 
-func (txModel) GetTxsForMining(minerPublicKey string) *TxS {
+func (txModel) GetTxsForMining(minerPublicKey string, minCount int) *TxS {
 	count := 0
 	var txIDs []string
 	txsMap := GetTxsOccupation()
@@ -71,7 +71,7 @@ func (txModel) GetTxsForMining(minerPublicKey string) *TxS {
 			break
 		}
 	}
-	if len(txIDs) == 0 {
+	if count <= minCount {
 		return nil
 	}
 

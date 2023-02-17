@@ -136,19 +136,33 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 				Peers.BroadcastRejectPeer(peer)
 			}
 		}
-	case messages.MessageTxsRequest:
-		txs := transactions.GetTxsForMining(p.PublicKey)
+	case messages.MessageMempoolTxsRequest:
 
-		payload, err := json.Marshal(messages.PayloadTxs{
-			Txs: *txs,
-		})
-		lib.HandleErr(err)
+		payload := &messages.PayloadCount{}
+		json.Unmarshal(m.Payload, payload)
 
-		m, err := json.Marshal(messages.Message{
-			Kind:    messages.MessageTxsResponse,
-			Payload: payload,
-		})
-		lib.HandleErr(err)
+		txs := transactions.GetTxsForMining(p.PublicKey, payload.Count)
+
+		var m []byte
+		var err error
+		if txs == nil {
+			m, err = json.Marshal(messages.Message{
+				Kind:    messages.MessageTxsDeclined,
+				Payload: nil,
+			})
+			lib.HandleErr(err)
+		} else {
+			payload, err := json.Marshal(messages.PayloadTxs{
+				Txs: *txs,
+			})
+			lib.HandleErr(err)
+
+			m, err = json.Marshal(messages.Message{
+				Kind:    messages.MessageMempoolTxsResponse,
+				Payload: payload,
+			})
+			lib.HandleErr(err)
+		}
 
 		p.Inbox <- m
 
