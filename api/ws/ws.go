@@ -79,11 +79,12 @@ func GetPeers(c *gin.Context) {
 
 	host := strings.Split(c.Request.RemoteAddr, ":")[0]
 	port := c.Query("port")
-	if _, exists := prs.V[fmt.Sprintf("%s:%s", host, port)]; !exists {
+	addr := fmt.Sprintf("%s:%s", host, port)
+	if _, exists := prs.V[addr]; !exists {
 		c.Status(http.StatusUnauthorized)
 		return
 	}
 
-	peerList := prs.GetAllPeers()
+	peerList := prs.GetAllPeers(addr)
 	c.JSON(http.StatusOK, peerList)
 }

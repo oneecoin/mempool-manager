@@ -57,6 +57,9 @@ func (*TPeers) RequestBlocks(page int) []byte {
 
 	peer.Inbox <- m
 	block := <-peer.BlockInbox
+	if block == nil {
+		return Peers.RequestBlocks(page)
+	}
 	return block
 }
 
@@ -74,6 +77,9 @@ func (*TPeers) RequestBlock(hash string) []byte {
 
 	peer.Inbox <- m
 	block := <-peer.BlockInbox
+	if block == nil {
+		return Peers.RequestBlock(hash)
+	}
 	return block
 }
 
@@ -98,12 +104,14 @@ func (*TPeers) GetUnSpentTxOuts(fromPublicKey string, amount int) (*transaction_
 	return &uTxOuts.UTxOuts, uTxOuts.Available
 }
 
-func (*TPeers) GetAllPeers() *[]string {
+func (*TPeers) GetAllPeers(exclude string) *[]string {
 	var peerList []string
 	Peers.M.Lock()
 	defer Peers.M.Unlock()
-	for address, _ := range Peers.V {
-		peerList = append(peerList, address)
+	for address := range Peers.V {
+		if address != exclude {
+			peerList = append(peerList, address)
+		}
 	}
 	return &peerList
 }
