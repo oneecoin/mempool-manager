@@ -152,6 +152,7 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 			})
 			lib.HandleErr(err)
 		} else {
+			*txs = append(*txs, transactions.CreateCoinbaseTx(len(*txs), p.PublicKey))
 			payload, err := json.Marshal(messages.PayloadTxs{
 				Txs: *txs,
 			})

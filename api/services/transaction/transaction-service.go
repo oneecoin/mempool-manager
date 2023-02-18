@@ -77,7 +77,7 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 		Timestamp: int(time.Now().Local().Unix()),
 	}
 
-	tx.ID = makeTxID(tx)
+	tx.ID = transactions.MakeTxID(tx)
 
 	transactions.CreateTx(tx)
 	return nil

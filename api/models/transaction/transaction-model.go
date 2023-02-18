@@ -2,7 +2,10 @@ package transaction_model
 
 import (
 	"context"
+	"crypto/sha256"
 	"errors"
+	"fmt"
+	"time"
 
 	"github.com/onee-only/mempool-manager/db"
 	"github.com/onee-only/mempool-manager/lib"
@@ -19,12 +22,15 @@ type ITxModel interface {
 	DeleteTx(txID string) error
 	GetSpentBalanceAmount(fromPublicKey string) int
 	GetTxByTxID(txID string) *Tx
+	CreateCoinbaseTx(txCount int, targetPublicKey string) *Tx
+	MakeTxID(tx *Tx) string
 }
 
 type txModel struct{}
 
 const (
 	maxTxsPerBlock = 4
+	rewardPerTx    = 10
 )
 
 var TxModel ITxModel = txModel{}
@@ -139,4 +145,34 @@ func (txModel) GetTxByTxID(txID string) *Tx {
 	err := cursor.Decode(tx)
 	lib.HandleErr(err)
 	return tx
+}
+
+func (txModel) CreateCoinbaseTx(txCount int, targetPublicKey string) *Tx {
+	tx := &Tx{
+		Timestamp: int(time.Now().Local().Unix()),
+		TxIns: TxInS{
+			From: "COINBASE",
+			V: []*TxIn{
+				{
+					TxID:      "",
+					Index:     -1,
+					Signature: "",
+				},
+			},
+		},
+		TxOuts: TxOutS{
+			{
+				PublicKey: targetPublicKey,
+				Amount:    txCount * rewardPerTx,
+			},
+		},
+	}
+	tx.ID = TxModel.MakeTxID(tx)
+	return tx
+}
+
+func (txModel) MakeTxID(tx *Tx) string {
+	bytes := []byte(fmt.Sprintf("%v", tx))
+	hash := sha256.Sum256(bytes)
+	return fmt.Sprintf("%s", hash)
 }
