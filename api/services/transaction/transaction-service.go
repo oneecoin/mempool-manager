@@ -55,7 +55,7 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 		txIns.V = append(txIns.V, &transaction_model.TxIn{
 			TxID:      uTxOut.TxID,
 			Index:     uTxOut.Index,
-			Signature: wallets.Sign(privKeyObj, uTxOut.TxID),
+			Signature: "",
 		})
 	}
 
@@ -78,6 +78,10 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 	}
 
 	tx.ID = transactions.MakeTxID(tx)
+
+	for _, txIn := range tx.TxIns.V {
+		txIn.Signature = wallets.Sign(privKeyObj, tx.ID)
+	}
 
 	transactions.CreateTx(tx)
 	return nil
