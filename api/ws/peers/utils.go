@@ -16,3 +16,11 @@ func getRandomPeer() *Peer {
 	}
 	return v
 }
+
+func calculateHalfPeers() int {
+	halfOfPeers := len(Peers.V) / 2
+	if len(Peers.V)%2 != 0 {
+		halfOfPeers++
+	}
+	return halfOfPeers
+}
