@@ -2,7 +2,6 @@ package examplechain_service
 
 import (
 	"crypto/sha256"
-	"encoding/json"
 	"fmt"
 
 	models "github.com/onee-only/mempool-manager/api/models/example-chain"
@@ -27,8 +26,7 @@ func hashBlock(payload *models.ExampleChainBlock) string {
 		Height:    payload.Height,
 		Nonce:     payload.Nonce,
 	}
-	bytes, err := json.Marshal(block)
-	lib.HandleErr(err)
+	bytes := lib.ToJSON(block)
 
 	hash := sha256.Sum256(bytes)
 	return fmt.Sprintf("%x", hash)

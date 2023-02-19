@@ -1,7 +1,6 @@
 package peers
 
 import (
-	"encoding/json"
 	"sync"
 
 	transaction_model "github.com/onee-only/mempool-manager/api/models/transaction"
@@ -29,15 +28,13 @@ func (*TPeers) InitPeer(p *Peer) {
 }
 
 func (*TPeers) BroadcastRejectPeer(p *Peer) {
-	payload, err := json.Marshal(messages.PayloadPeer{
+	payload := lib.ToJSON(messages.PayloadPeer{
 		PeerAddress: p.GetAddress(),
 	})
-	lib.HandleErr(err)
-	m, err := json.Marshal(messages.Message{
+	m := lib.ToJSON(messages.Message{
 		Kind:    messages.MessagePeerRejected,
 		Payload: payload,
 	})
-	lib.HandleErr(err)
 	for _, peer := range Peers.V {
 		peer.Inbox <- m
 	}
@@ -46,14 +43,12 @@ func (*TPeers) BroadcastRejectPeer(p *Peer) {
 func (*TPeers) RequestBlocks(page int) []byte {
 	peer := getRandomPeer()
 
-	payload, err := json.Marshal(messages.PayloadPage{Page: page})
-	lib.HandleErr(err)
+	payload := lib.ToJSON(messages.PayloadPage{Page: page})
 
-	m, err := json.Marshal(messages.Message{
+	m := lib.ToJSON(messages.Message{
 		Kind:    messages.MessageBlocksRequest,
 		Payload: payload,
 	})
-	lib.HandleErr(err)
 
 	peer.Inbox <- m
 	block := <-peer.BlockInbox
@@ -66,14 +61,12 @@ func (*TPeers) RequestBlocks(page int) []byte {
 func (*TPeers) RequestBlock(hash string) []byte {
 	peer := getRandomPeer()
 
-	payload, err := json.Marshal(messages.PayloadHash{Hash: hash})
-	lib.HandleErr(err)
+	payload := lib.ToJSON(messages.PayloadHash{Hash: hash})
 
-	m, err := json.Marshal(messages.Message{
+	m := lib.ToJSON(messages.Message{
 		Kind:    messages.MessageBlockRequest,
 		Payload: payload,
 	})
-	lib.HandleErr(err)
 
 	peer.Inbox <- m
 	block := <-peer.BlockInbox
@@ -86,17 +79,15 @@ func (*TPeers) RequestBlock(hash string) []byte {
 func (*TPeers) GetUnSpentTxOuts(fromPublicKey string, amount int) (*transaction_model.UTxOutS, bool) {
 	peer := getRandomPeer()
 
-	payload, err := json.Marshal(messages.PayloadUTxOutsFilter{
+	payload := lib.ToJSON(messages.PayloadUTxOutsFilter{
 		PublicKey: fromPublicKey,
 		Amount:    amount,
 	})
-	lib.HandleErr(err)
 
-	m, err := json.Marshal(messages.Message{
+	m := lib.ToJSON(messages.Message{
 		Kind:    messages.MessageUTxOutsRequest,
 		Payload: payload,
 	})
-	lib.HandleErr(err)
 
 	peer.Inbox <- m
 

@@ -1,8 +1,6 @@
 package peers
 
 import (
-	"encoding/json"
-
 	"github.com/onee-only/mempool-manager/api/ws/messages"
 	"github.com/onee-only/mempool-manager/lib"
 )
@@ -12,7 +10,7 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 	case messages.MessageRejectPeer:
 
 		payload := &messages.PayloadPeer{}
-		json.Unmarshal(m.Payload, payload)
+		lib.FromJSON(m.Payload, payload)
 
 		peer, exists := Peers.V[payload.PeerAddress]
 		if exists {
@@ -27,30 +25,26 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 	case messages.MessageMempoolTxsRequest:
 
 		payload := &messages.PayloadCount{}
-		json.Unmarshal(m.Payload, payload)
+		lib.FromJSON(m.Payload, payload)
 
 		txs := transactions.GetTxsForMining(p.PublicKey, payload.Count)
 
 		var m []byte
-		var err error
 		if txs == nil {
-			m, err = json.Marshal(messages.Message{
+			m = lib.ToJSON(messages.Message{
 				Kind:    messages.MessageTxsDeclined,
 				Payload: nil,
 			})
-			lib.HandleErr(err)
 		} else {
 			*txs = append(*txs, transactions.CreateCoinbaseTx(len(*txs), p.PublicKey))
-			payload, err := json.Marshal(messages.PayloadTxs{
+			payload := lib.ToJSON(messages.PayloadTxs{
 				Txs: *txs,
 			})
-			lib.HandleErr(err)
 
-			m, err = json.Marshal(messages.Message{
+			m = lib.ToJSON(messages.Message{
 				Kind:    messages.MessageMempoolTxsResponse,
 				Payload: payload,
 			})
-			lib.HandleErr(err)
 		}
 
 		p.Inbox <- m
@@ -61,8 +55,7 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 		p.BlockInbox <- m.Payload
 	case messages.MessageUTxOutsResponse:
 		data := messages.PayloadUTxOuts{}
-		err := json.Unmarshal(m.Payload, &data)
-		lib.HandleErr(err)
+		lib.FromJSON(m.Payload, &data)
 		p.UTxOutsInbox <- data
 
 	}

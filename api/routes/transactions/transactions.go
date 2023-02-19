@@ -1,7 +1,6 @@
 package transactions
 
 import (
-	"encoding/json"
 	"io"
 	"net/http"
 
@@ -22,7 +21,7 @@ func CreateTransaction(c *gin.Context) {
 	lib.HandleErr(err)
 
 	var txCreateReq TxCreateRequest
-	err = json.Unmarshal(req, &txCreateReq)
+	lib.FromJSON(req, &txCreateReq)
 
 	if err != nil {
 		c.Status(http.StatusBadRequest)
