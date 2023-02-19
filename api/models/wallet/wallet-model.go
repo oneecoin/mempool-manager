@@ -32,11 +32,11 @@ func (walletModel) CreatePrivateKey() (privateKey *ecdsa.PrivateKey) {
 }
 
 func (walletModel) MakePublicKey(key *ecdsa.PrivateKey) string {
-	return encodeBigInts(key.X.Bytes(), key.Y.Bytes())
+	return lib.EncodeBigInts(key.X.Bytes(), key.Y.Bytes())
 }
 
 func (walletModel) EncodePublicKey(publicKey string) (*big.Int, *big.Int, error) {
-	return restoreBigInts(publicKey)
+	return lib.RestoreBigInts(publicKey)
 }
 
 func (walletModel) RestoreWallet(publicKey string, privateKey string) (*Wallet, error) {
@@ -75,6 +75,6 @@ func (walletModel) Sign(privateKey *ecdsa.PrivateKey, payload string) string {
 	lib.HandleErr(err)
 	r, s, err := ecdsa.Sign(rand.Reader, privateKey, payloadBytes)
 	lib.HandleErr(err)
-	signature := encodeBigInts(r.Bytes(), s.Bytes())
+	signature := lib.EncodeBigInts(r.Bytes(), s.Bytes())
 	return signature
 }
