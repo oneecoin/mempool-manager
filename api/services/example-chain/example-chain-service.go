@@ -9,7 +9,7 @@ import (
 )
 
 const (
-	defaultDifficulty = 4
+	defaultDifficulty = 3
 )
 
 type IExampleChainService interface {
