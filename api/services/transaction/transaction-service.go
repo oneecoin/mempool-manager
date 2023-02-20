@@ -60,16 +60,16 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 		})
 	}
 
+	txOuts = append(txOuts, &transaction_model.TxOut{
+		PublicKey: targetAddress,
+		Amount:    amount,
+	})
 	if change != 0 {
 		txOuts = append(txOuts, &transaction_model.TxOut{
 			PublicKey: fromPublicKey,
 			Amount:    change,
 		})
 	}
-	txOuts = append(txOuts, &transaction_model.TxOut{
-		PublicKey: targetAddress,
-		Amount:    amount,
-	})
 
 	tx := &transaction_model.Tx{
 		ID:        "",
