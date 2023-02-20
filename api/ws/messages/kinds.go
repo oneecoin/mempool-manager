@@ -24,6 +24,5 @@ const (
 	// etc.
 	MessageRejectPeer
 	MessagePeerRejected
-	MessageBlockAdded
 	MessageNewBlock
 )
