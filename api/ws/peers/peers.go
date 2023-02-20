@@ -106,3 +106,13 @@ func (*TPeers) GetAllPeers(exclude string) *[]string {
 	}
 	return &peerList
 }
+
+var newBlockMap = make(map[string]int)
+
+func handleNewBlock(address string) {
+	newBlockMap[address]++
+	if newBlockMap[address] >= calculateHalfPeers() {
+		transactions.DeleteTxs(Peers.V[address].PublicKey)
+		delete(newBlockMap, address)
+	}
+}

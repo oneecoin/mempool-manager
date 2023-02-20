@@ -72,6 +72,26 @@ func occupyTxs(txIDs []string, minerPublicKey string) {
 	}
 }
 
+func unOccupyTxs(publicKey string, txIDs []string) {
+	txsMap := GetTxsOccupation()
+	txsMap.m.Lock()
+	defer txsMap.m.Unlock()
+
+	for txID, minerPK := range txsMap.v {
+		if minerPK == publicKey {
+			invalid := false
+			for _, aTxID := range txIDs {
+				if txID == aTxID {
+					invalid = true
+				}
+			}
+			if !invalid {
+				txsMap.v[txID] = ""
+			}
+		}
+	}
+}
+
 func createFilterByTxIDs(txIDs []string) primitive.D {
 	var arr bson.A
 	for _, txID := range txIDs {

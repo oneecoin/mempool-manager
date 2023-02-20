@@ -1,9 +1,12 @@
 package peers
 
 import (
+	transaction_model "github.com/onee-only/mempool-manager/api/models/transaction"
 	"github.com/onee-only/mempool-manager/api/ws/messages"
 	"github.com/onee-only/mempool-manager/lib"
 )
+
+var TxsInbox chan transaction_model.TxS
 
 func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 	switch m.Kind {
@@ -57,6 +60,19 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 		data := messages.PayloadUTxOuts{}
 		lib.FromJSON(m.Payload, &data)
 		p.UTxOutsInbox <- data
+	case messages.MessageNewBlock:
+		payload := &messages.PayloadPeer{}
+		lib.FromJSON(m.Payload, payload)
+		handleNewBlock(payload.PeerAddress)
+	case messages.MessageNodeTxsResponse:
+		payload := &messages.PayloadTxs{}
+		lib.FromJSON(m.Payload, payload)
+		TxsInbox <- payload.Txs
+	case messages.MessageInvalidTxsRequest:
 
+		payload := &messages.PayloadTxs{}
+		lib.FromJSON(m.Payload, payload)
+
+		transactions.HandleInvalidTxs(payload.Txs, p.PublicKey)
 	}
 }

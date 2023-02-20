@@ -24,6 +24,7 @@ type ITxModel interface {
 	GetTxByTxID(txID string) *Tx
 	CreateCoinbaseTx(txCount int, targetPublicKey string) *Tx
 	MakeTxID(tx *Tx) string
+	HandleInvalidTxs(txs TxS, publicKey string)
 }
 
 type txModel struct{}
@@ -176,4 +177,13 @@ func (txModel) MakeTxID(tx *Tx) string {
 	bytes := []byte(fmt.Sprintf("%v", tx))
 	hash := sha256.Sum256(bytes)
 	return fmt.Sprintf("%s", hash)
+}
+
+func (txModel) HandleInvalidTxs(txs TxS, publicKey string) {
+	var txIDs []string
+	for _, tx := range txs {
+		txIDs = append(txIDs, tx.ID)
+	}
+	unOccupyTxs(publicKey, txIDs)
+	TxModel.DeleteTxs(publicKey)
 }
