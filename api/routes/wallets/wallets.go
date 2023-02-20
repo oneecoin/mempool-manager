@@ -20,7 +20,10 @@ func CreateWallet(c *gin.Context) {
 }
 
 func GetTransactions(c *gin.Context) {
-	txs := <-peers.TxsInbox
+
+	publicKey := c.Param("publicKey")
+
+	txs := peers.Peers.RequestTxs(publicKey)
 	if len(txs) == 0 {
 		c.Status(http.StatusNotFound)
 	} else {
@@ -29,5 +32,10 @@ func GetTransactions(c *gin.Context) {
 }
 
 func GetBalance(c *gin.Context) {
+	publicKey := c.Param("publicKey")
 
+	balance := peers.Peers.RequestBalance(publicKey)
+	c.JSON(http.StatusOK, struct {
+		Balance int `json:"balance"`
+	}{Balance: balance})
 }

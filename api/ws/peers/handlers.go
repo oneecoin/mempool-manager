@@ -6,7 +6,8 @@ import (
 	"github.com/onee-only/mempool-manager/lib"
 )
 
-var TxsInbox chan transaction_model.TxS
+var txsInbox chan transaction_model.TxS
+var balanceInbox chan int
 
 func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 	switch m.Kind {
@@ -67,12 +68,17 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 	case messages.MessageNodeTxsResponse:
 		payload := &messages.PayloadTxs{}
 		lib.FromJSON(m.Payload, payload)
-		TxsInbox <- payload.Txs
+		txsInbox <- payload.Txs
 	case messages.MessageInvalidTxsRequest:
 
 		payload := &messages.PayloadTxs{}
 		lib.FromJSON(m.Payload, payload)
 
 		transactions.HandleInvalidTxs(payload.Txs, p.PublicKey)
+	case messages.MessageBalanceResponse:
+		payload := &messages.PayloadCount{}
+		lib.FromJSON(m.Payload, payload)
+
+		balanceInbox <- payload.Count
 	}
 }

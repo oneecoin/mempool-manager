@@ -13,12 +13,14 @@ const (
 	MessageBlockResponse
 	MessageUTxOutsResponse
 	MessageNodeTxsResponse
+	MessageBalanceResponse
 
 	// requests from mempool
 	MessageBlocksRequest
 	MessageBlockRequest
 	MessageUTxOutsRequest
 	MessageNodeTxsRequest
+	MessageBalanceRequest
 
 	// responses from mempool
 	MessageMempoolTxsResponse

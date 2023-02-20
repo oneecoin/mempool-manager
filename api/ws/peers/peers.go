@@ -76,6 +76,36 @@ func (*TPeers) RequestBlock(hash string) []byte {
 	return block
 }
 
+func (*TPeers) RequestTxs(publicKey string) transaction_model.TxS {
+	p := getRandomPeer()
+
+	payload := messages.PayloadHash{Hash: publicKey}
+	m := messages.Message{
+		Kind:    messages.MessageNodeTxsRequest,
+		Payload: lib.ToJSON(payload),
+	}
+
+	p.Inbox <- lib.ToJSON(m)
+	txs := <-txsInbox
+	return txs
+}
+
+func (*TPeers) RequestBalance(publicKey string) int {
+
+	p := getRandomPeer()
+
+	payload := messages.PayloadHash{Hash: publicKey}
+	m := messages.Message{
+		Kind:    messages.MessageBalanceRequest,
+		Payload: lib.ToJSON(payload),
+	}
+
+	p.Inbox <- lib.ToJSON(m)
+
+	balance := <-balanceInbox
+	return balance
+}
+
 func (*TPeers) GetUnSpentTxOuts(fromPublicKey string, amount int) (*transaction_model.UTxOutS, bool) {
 	peer := getRandomPeer()
 
