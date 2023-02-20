@@ -53,6 +53,7 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 
 	for _, uTxOut := range *unSpentTxOuts {
 		txIns.V = append(txIns.V, &transaction_model.TxIn{
+			BlockHash: uTxOut.BlockHash,
 			TxID:      uTxOut.TxID,
 			Index:     uTxOut.Index,
 			Signature: "",

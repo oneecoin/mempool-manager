@@ -3,6 +3,7 @@ package transaction_model
 import "fmt"
 
 type TxIn struct {
+	BlockHash string `json:"blockHash"`
 	TxID      string `json:"txId"`
 	Index     int    `json:"index"`
 	Signature string `json:"signature"`
@@ -13,9 +14,10 @@ type TxOut struct {
 }
 
 type UTxOut struct {
-	TxID   string `json:"txId"`
-	Index  int    `json:"index"`
-	Amount int    `json:"amount"`
+	BlockHash string `json:"blockHash"`
+	TxID      string `json:"txId"`
+	Index     int    `json:"index"`
+	Amount    int    `json:"amount"`
 }
 
 type Tx struct {

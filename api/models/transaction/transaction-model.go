@@ -154,6 +154,7 @@ func (txModel) CreateCoinbaseTx(txCount int, targetPublicKey string) *Tx {
 			From: "COINBASE",
 			V: []*TxIn{
 				{
+					BlockHash: "",
 					TxID:      "",
 					Index:     -1,
 					Signature: "",
