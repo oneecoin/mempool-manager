@@ -25,4 +25,5 @@ const (
 	MessageRejectPeer
 	MessagePeerRejected
 	MessageBlockAdded
+	MessageNewBlock
 )

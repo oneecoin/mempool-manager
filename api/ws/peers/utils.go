@@ -5,7 +5,10 @@ import (
 )
 
 func getRandomPeer() *Peer {
-	countLeft := rand.Intn(len(Peers.V))
+	countLeft := 0
+	if len(Peers.V) != 0 {
+		countLeft = rand.Intn(len(Peers.V))
+	}
 	var v *Peer
 	for _, peer := range Peers.V {
 		if countLeft == 0 {
