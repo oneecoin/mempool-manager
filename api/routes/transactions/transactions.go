@@ -28,6 +28,11 @@ func CreateTransaction(c *gin.Context) {
 		return
 	}
 
+	if txCreateReq.Amount == 0 {
+		c.Status(http.StatusForbidden)
+		return
+	}
+
 	transactions.CreateTx(
 		txCreateReq.PrivateKey,
 		txCreateReq.To,
