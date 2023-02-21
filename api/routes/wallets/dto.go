@@ -1,11 +1,11 @@
 package wallets
 
-type WalletResponse struct {
-	PrivateKey string `json:"privateKey"`
-	PublicKey  string `json:"publicKey"`
+type WalletDTO struct {
+	PrivateKey string `json:"privateKey" binding:"required"`
+	PublicKey  string `json:"publicKey" binding:"required"`
 }
 
-func (w *WalletResponse) setKeys(publicKey string, privateKey string) {
+func (w *WalletDTO) setKeys(publicKey string, privateKey string) {
 	w.PublicKey = publicKey
 	w.PrivateKey = privateKey
 }

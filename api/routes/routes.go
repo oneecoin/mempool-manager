@@ -25,6 +25,7 @@ func GetRoutes(router *gin.Engine) {
 	w := router.Group("/wallets")
 	{
 		w.POST("", wallets.CreateWallet)
+		w.POST("/verify", wallets.VerifyWallet)
 
 		w.GET("/:publicKey", wallets.GetTransactions)
 		w.GET("/:publicKey/balance", wallets.GetBalance)
