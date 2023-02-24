@@ -13,7 +13,23 @@ var transactions transaction_service.ITxService = transaction_service.TxService
 
 func GetAllTransactions(c *gin.Context) {
 	txs := transactions.GetAllTxs()
-	c.JSON(http.StatusOK, txs)
+
+	txsResElems := []*TxsResponseElement{}
+
+	for _, tx := range txs {
+		txElem := TxsResponseElement{
+			IsProccessing: transactions.IsTxProcessing(tx.ID),
+			From:          tx.TxIns.From,
+			To:            tx.TxOuts[0].PublicKey,
+			Amount:        tx.TxOuts[0].Amount,
+		}
+		txsResElems = append(txsResElems, &txElem)
+	}
+
+	txsRes := TxsResponse{
+		Txs: txsResElems,
+	}
+	c.JSON(http.StatusOK, txsRes)
 }
 
 func CreateTransaction(c *gin.Context) {
