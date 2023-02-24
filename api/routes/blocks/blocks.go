@@ -17,7 +17,6 @@ func GetBlocks(c *gin.Context) {
 		return
 	}
 	bytes := prs.RequestBlocks(bq.Page)
-	// should add error handling. like 404
 	c.JSON(http.StatusOK, bytes)
 }
 
@@ -25,5 +24,10 @@ func GetBlock(c *gin.Context) {
 	hash := c.Param("hash")
 	bytes := prs.RequestBlock(hash)
 	// should add error handling. like 404
+	c.JSON(http.StatusOK, bytes)
+}
+
+func GetSummary(c *gin.Context) {
+	bytes := prs.GetLatest()
 	c.JSON(http.StatusOK, bytes)
 }

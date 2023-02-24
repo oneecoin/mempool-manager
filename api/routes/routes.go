@@ -35,6 +35,7 @@ func GetRoutes(router *gin.Engine) {
 	b := router.Group("/blocks")
 	{
 		b.GET("", blocks.GetBlocks)
+		b.GET("/summary", blocks.GetSummary)
 		b.GET("/:hash", blocks.GetBlock)
 	}
 

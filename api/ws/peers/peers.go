@@ -137,6 +137,19 @@ func (*TPeers) GetAllPeers(exclude string) *[]string {
 	return &peerList
 }
 
+func (*TPeers) GetLatest() []byte {
+	peer := getRandomPeer()
+
+	m := lib.ToJSON(messages.Message{
+		Kind:    messages.MessageBlockRequest,
+		Payload: nil,
+	})
+
+	peer.Inbox <- m
+	block := <-peer.BlockInbox
+	return block
+}
+
 var newBlockMap = make(map[string]int)
 
 func handleNewBlock(address string) {
