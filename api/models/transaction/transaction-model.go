@@ -14,10 +14,10 @@ import (
 )
 
 type ITxModel interface {
-	GetAllTxs() *TxS
+	GetAllTxs() TxS
 	CreateTx(tx *Tx)
 	IsTxOccupied(txID string) bool
-	GetTxsForMining(minerPublicKey string, minCount int) *TxS
+	GetTxsForMining(minerPublicKey string, minCount int) TxS
 	DeleteTxs(minerPublicKey string)
 	DeleteTx(txID string) error
 	GetSpentBalanceAmount(fromPublicKey string) int
@@ -36,8 +36,8 @@ const (
 
 var TxModel ITxModel = txModel{}
 
-func (txModel) GetAllTxs() *TxS {
-	var txs *TxS
+func (txModel) GetAllTxs() TxS {
+	var txs TxS
 
 	cursor, err := db.Transactions.Find(context.TODO(), bson.D{})
 	lib.HandleErr(err)
@@ -63,7 +63,7 @@ func (txModel) IsTxOccupied(txID string) bool {
 	return txsMap.v[txID] != ""
 }
 
-func (txModel) GetTxsForMining(minerPublicKey string, minCount int) *TxS {
+func (txModel) GetTxsForMining(minerPublicKey string, minCount int) TxS {
 	count := 0
 	var txIDs []string
 	txsMap := GetTxsOccupation()
@@ -82,7 +82,7 @@ func (txModel) GetTxsForMining(minerPublicKey string, minCount int) *TxS {
 		return nil
 	}
 
-	var txs *TxS
+	var txs TxS
 
 	filter := createFilterByTxIDs(txIDs)
 

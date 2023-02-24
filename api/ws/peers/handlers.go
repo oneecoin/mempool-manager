@@ -40,9 +40,9 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 				Payload: nil,
 			})
 		} else {
-			*txs = append(*txs, transactions.CreateCoinbaseTx(len(*txs), p.PublicKey))
+			txs = append(txs, transactions.CreateCoinbaseTx(len(txs), p.PublicKey))
 			payload := lib.ToJSON(messages.PayloadTxs{
-				Txs: *txs,
+				Txs: txs,
 			})
 
 			m = lib.ToJSON(messages.Message{

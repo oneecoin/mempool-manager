@@ -106,7 +106,7 @@ func (*TPeers) RequestBalance(publicKey string) int {
 	return balance
 }
 
-func (*TPeers) GetUnSpentTxOuts(fromPublicKey string, amount int) (*transaction_model.UTxOutS, bool) {
+func (*TPeers) GetUnSpentTxOuts(fromPublicKey string, amount int) (transaction_model.UTxOutS, bool) {
 	peer := getRandomPeer()
 
 	payload := lib.ToJSON(messages.PayloadUTxOutsFilter{
@@ -122,7 +122,7 @@ func (*TPeers) GetUnSpentTxOuts(fromPublicKey string, amount int) (*transaction_
 	peer.Inbox <- m
 
 	uTxOuts := <-peer.UTxOutsInbox
-	return &uTxOuts.UTxOuts, uTxOuts.Available
+	return uTxOuts.UTxOuts, uTxOuts.Available
 }
 
 func (*TPeers) GetAllPeers(exclude string) *[]string {

@@ -12,7 +12,7 @@ import (
 type ITxService interface {
 	IsTxProcessing(txID string) bool
 	CreateTx(privateKey, targetAddress string, amount int) error
-	GetAllTxs() *transaction_model.TxS
+	GetAllTxs() transaction_model.TxS
 	GetTx(hash string) *transaction_model.Tx
 	DeleteTxs(minerPublicKey string)
 	TryDeleteTx(txID string) error
@@ -51,7 +51,7 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 	txIns := transaction_model.TxInS{From: fromPublicKey}
 	txOuts := transaction_model.TxOutS{}
 
-	for _, uTxOut := range *unSpentTxOuts {
+	for _, uTxOut := range unSpentTxOuts {
 		txIns.V = append(txIns.V, &transaction_model.TxIn{
 			BlockHash: uTxOut.BlockHash,
 			TxID:      uTxOut.TxID,
@@ -88,7 +88,7 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 	return nil
 }
 
-func (txService) GetAllTxs() *transaction_model.TxS {
+func (txService) GetAllTxs() transaction_model.TxS {
 	return transactions.GetAllTxs()
 }
 
