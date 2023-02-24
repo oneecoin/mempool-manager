@@ -18,6 +18,7 @@ func GetAllTransactions(c *gin.Context) {
 
 	for _, tx := range txs {
 		txElem := TxsResponseElement{
+			TxID:          tx.ID,
 			IsProccessing: transactions.IsTxProcessing(tx.ID),
 			From:          tx.TxIns.From,
 			To:            tx.TxOuts[0].PublicKey,

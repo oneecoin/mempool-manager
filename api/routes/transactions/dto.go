@@ -8,6 +8,7 @@ type TxResponse struct {
 }
 
 type TxsResponseElement struct {
+	TxID string `json:"txID"`
 	IsProccessing bool   `json:"isProccessing"`
 	From          string `json:"from"`
 	To            string `json:"to"`
