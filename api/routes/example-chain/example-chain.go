@@ -54,3 +54,8 @@ func CreateBlock(c *gin.Context) {
 		c.JSON(http.StatusCreated, block)
 	}
 }
+
+func GetSummary(c *gin.Context) {
+	summary := exchain.GetSummary()
+	c.JSON(http.StatusOK, summary)
+}

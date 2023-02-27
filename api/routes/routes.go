@@ -54,5 +54,6 @@ func GetRoutes(router *gin.Engine) {
 	{
 		exchain.GET("", examplechain.GetAllBlocks)
 		exchain.POST("", examplechain.CreateBlock)
+		exchain.GET("/summary", examplechain.GetSummary)
 	}
 }

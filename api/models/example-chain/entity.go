@@ -1,8 +1,8 @@
 package examplechain_model
 
 type ExampleChain struct {
-	Height     int
-	LatestHash string
+	Height     int    `json:"height"`
+	LatestHash string `json:"latestHash"`
 }
 
 type ExampleChainBlock struct {

@@ -33,8 +33,10 @@ func initSummary() *ExampleChain {
 	var result []*ExampleChainBlock
 	cursor.All(context.TODO(), &result)
 
-	summary.Height = result[0].Height
-	summary.LatestHash = result[0].Hash
+	if len(result) != 0 {
+		summary.Height = result[0].Height
+		summary.LatestHash = result[0].Hash
+	}
 
 	return summary
 }

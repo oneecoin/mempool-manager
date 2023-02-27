@@ -16,6 +16,7 @@ type IExampleChainService interface {
 	GetAllBlocks() []*models.ExampleChainBlock
 	ValidateBlock(*models.ExampleChainBlock) bool
 	AddBlock(*models.ExampleChainBlock) error
+	GetSummary() *models.ExampleChain
 }
 
 type ExampleChainService struct{}
@@ -63,4 +64,8 @@ func (ExampleChainService) AddBlock(block *models.ExampleChainBlock) error {
 	mTx.CreateTx(tx)
 	mExchain.SetSummary(block)
 	return nil
+}
+
+func (ExampleChainService) GetSummary() *models.ExampleChain {
+	return mExchain.GetSummary()
 }
