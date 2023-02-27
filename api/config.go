@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/onee-only/mempool-manager/api/routes"
+	"github.com/onee-only/mempool-manager/middlewares"
 )
 
 func InitServer() {
@@ -12,6 +13,7 @@ func InitServer() {
 	app := gin.Default()
 
 	// routes
+	app.Use(middlewares.CORSMiddleware)
 	routes.GetRoutes(app)
 
 	app.Run(":8080")
