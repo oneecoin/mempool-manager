@@ -49,7 +49,7 @@ func CreateBlock(c *gin.Context) {
 	block.Created = int(time.Now().Local().Unix())
 	err = exchain.AddBlock(block)
 	if err != nil {
-		c.Status(http.StatusNotAcceptable)
+		c.Status(http.StatusAlreadyReported)
 	} else {
 		c.JSON(http.StatusCreated, block)
 	}
