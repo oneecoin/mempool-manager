@@ -10,11 +10,11 @@ import (
 
 type BlockForHash struct {
 	Data      string `json:"data"`
-	PublicKey string `json:"publicKey"`
 	Hash      string `json:"hash"`
-	PrevHash  string `json:"prevHash"`
 	Height    int    `json:"height"`
 	Nonce     int    `json:"nonce"`
+	PrevHash  string `json:"prevHash"`
+	PublicKey string `json:"publicKey"`
 }
 
 func hashBlock(payload *models.ExampleChainBlock) string {

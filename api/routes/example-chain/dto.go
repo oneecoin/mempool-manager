@@ -7,11 +7,6 @@ type BlocksResponse struct {
 	Blocks []*models.ExampleChainBlock `json:"blocks"`
 }
 
-type LatestBlockResponse struct {
-	Height     int    `json:"height"`
-	LatestHash string `json:"latestHash"`
-}
-
 type CreateBlockRequest struct {
 	PrivateKey string `json:"privateKey" binding:"required"`
 	Block      struct {
