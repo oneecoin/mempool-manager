@@ -45,7 +45,7 @@ func (exchainModel) FindAllBlocks() []*ExampleChainBlock {
 }
 
 func (exchainModel) ExistsByPublicKey(publicKey string) bool {
-	count, err := db.ExampleChain.CountDocuments(context.TODO(), bson.D{{Key: "PublicKey", Value: publicKey}})
+	count, err := db.ExampleChain.CountDocuments(context.TODO(), bson.D{{Key: "publickey", Value: publicKey}})
 	lib.HandleErr(err)
 	return count == 1
 }

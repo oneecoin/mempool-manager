@@ -117,7 +117,7 @@ func (txModel) DeleteTx(txID string) error {
 	if publicKey := txsMap.v[txID]; publicKey != "" {
 		return errors.New("already taken")
 	}
-	_, err := db.Transactions.DeleteOne(context.TODO(), bson.D{{Key: "ID", Value: txID}})
+	_, err := db.Transactions.DeleteOne(context.TODO(), bson.D{{Key: "id", Value: txID}})
 	lib.HandleErr(err)
 	return nil
 }
@@ -125,7 +125,7 @@ func (txModel) DeleteTx(txID string) error {
 func (txModel) GetSpentBalanceAmount(fromPublicKey string) int {
 
 	filter := createFilterByTxInsFrom(fromPublicKey)
-	opts := options.Find().SetProjection(bson.D{{Key: "TxOuts.Amount", Value: 1}})
+	opts := options.Find().SetProjection(bson.D{{Key: "txouts.amount", Value: 1}})
 	cursor, err := db.Transactions.Find(context.TODO(), filter, opts)
 	lib.HandleErr(err)
 
@@ -142,7 +142,7 @@ func (txModel) GetSpentBalanceAmount(fromPublicKey string) int {
 
 func (txModel) GetTxByTxID(txID string) *Tx {
 	var tx *Tx
-	cursor := db.Transactions.FindOne(context.TODO(), bson.D{{Key: "ID", Value: txID}})
+	cursor := db.Transactions.FindOne(context.TODO(), bson.D{{Key: "id", Value: txID}})
 	err := cursor.Decode(tx)
 	lib.HandleErr(err)
 	return tx
