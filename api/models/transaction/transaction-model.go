@@ -41,7 +41,7 @@ func (txModel) GetAllTxs() TxS {
 
 	cursor, err := db.Transactions.Find(context.TODO(), bson.D{})
 	lib.HandleErr(err)
-	err = cursor.All(context.TODO(), txs)
+	err = cursor.All(context.TODO(), &txs)
 	lib.HandleErr(err)
 
 	return txs
