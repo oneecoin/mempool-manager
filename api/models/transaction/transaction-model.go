@@ -10,6 +10,7 @@ import (
 	"github.com/onee-only/mempool-manager/db"
 	"github.com/onee-only/mempool-manager/lib"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -141,10 +142,12 @@ func (txModel) GetSpentBalanceAmount(fromPublicKey string) int {
 }
 
 func (txModel) GetTxByTxID(txID string) *Tx {
-	var tx *Tx
+	var tx *Tx = &Tx{}
 	cursor := db.Transactions.FindOne(context.TODO(), bson.D{{Key: "id", Value: txID}})
 	err := cursor.Decode(tx)
-	lib.HandleErr(err)
+	if err != nil && err != mongo.ErrNoDocuments {
+		lib.HandleErr(err)
+	}
 	return tx
 }
 
