@@ -176,7 +176,7 @@ func (txModel) CreateCoinbaseTx(txCount int, targetPublicKey string) *Tx {
 func (txModel) MakeTxID(tx *Tx) string {
 	bytes := []byte(fmt.Sprintf("%v", tx))
 	hash := sha256.Sum256(bytes)
-	return fmt.Sprintf("%s", hash)
+	return fmt.Sprintf("%x", hash)
 }
 
 func (txModel) HandleInvalidTxs(txs TxS, publicKey string) {
