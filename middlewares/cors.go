@@ -7,7 +7,7 @@ import (
 )
 
 var CORSMiddleware = cors.New(cors.Config{
-	AllowAllOrigins: true,
+	AllowOrigins:    []string{"*"},
 	AllowMethods:    []string{"POST", "GET", "PUT", "DELETE", "HEAD"},
 	AllowWebSockets: true,
 	MaxAge:          12 * time.Hour,
