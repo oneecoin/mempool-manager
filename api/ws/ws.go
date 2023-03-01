@@ -30,6 +30,7 @@ func UpgradeWS(c *gin.Context) {
 		// send http request to the address
 		res, err := http.Get("http://" + address + "/check")
 		if err != nil {
+			fmt.Println(err)
 			return false
 		}
 		if res.StatusCode != http.StatusAccepted {
@@ -40,6 +41,7 @@ func UpgradeWS(c *gin.Context) {
 		a := struct{ PublicKey string }{}
 		err = json.NewDecoder(res.Body).Decode(&a)
 		if err != nil {
+			fmt.Println(err)
 			return false
 		}
 		if a.PublicKey != publicKey {
