@@ -3,7 +3,6 @@ package transactions
 import (
 	"io"
 	"net/http"
-	"reflect"
 
 	"github.com/gin-gonic/gin"
 	transaction_service "github.com/onee-only/mempool-manager/api/services/transaction"
@@ -60,7 +59,7 @@ func GetTransaction(c *gin.Context) {
 	hash := c.Param("hash")
 	tx := transactions.GetTx(hash)
 	isProccessing := transactions.IsTxProcessing(hash)
-	if reflect.ValueOf(tx).IsZero() {
+	if tx.ID == "" {
 		c.Status(http.StatusNotFound)
 		return
 	}
