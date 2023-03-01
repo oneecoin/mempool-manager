@@ -23,7 +23,7 @@ func UpgradeWS(c *gin.Context) {
 	publicKey := c.Query("publicKey")
 	port := c.Query("port")
 	host := c.ClientIP()
-	address := fmt.Sprintf("%s:%s", host, port)
+	// address := fmt.Sprintf("%s:%s", host, port)
 
 	wsUpgrader.CheckOrigin = func(r *http.Request) bool {
 		// send http request to the address
