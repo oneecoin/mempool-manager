@@ -28,10 +28,7 @@ func GetAllTransactions(c *gin.Context) {
 		txsResElems = append(txsResElems, &txElem)
 	}
 
-	txsRes := TxsResponse{
-		Txs: txsResElems,
-	}
-	c.JSON(http.StatusOK, txsRes)
+	c.JSON(http.StatusOK, txsResElems)
 }
 
 func CreateTransaction(c *gin.Context) {

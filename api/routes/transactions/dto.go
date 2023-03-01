@@ -8,17 +8,12 @@ type TxResponse struct {
 }
 
 type TxsResponseElement struct {
-	TxID string `json:"txID"`
+	TxID          string `json:"txID"`
 	IsProccessing bool   `json:"isProccessing"`
 	From          string `json:"from"`
 	To            string `json:"to"`
 	Amount        int    `json:"amount"`
 }
-
-type TxsResponse struct {
-	Txs []*TxsResponseElement `json:"txs"`
-}
-
 type TxCreateRequest struct {
 	PrivateKey string `json:"privateKey"`
 	To         string `json:"to"`
