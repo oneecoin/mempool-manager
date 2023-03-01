@@ -22,10 +22,10 @@ var wsUpgrader = websocket.Upgrader{
 var prs *peers.TPeers = peers.Peers
 
 var httpClient = &http.Client{
-	Timeout: 30 * time.Second, // Set the timeout to 30 seconds
+	Timeout: 90 * time.Second, // Set the timeout to 30 seconds
 	Transport: &http.Transport{
 		DialContext: (&net.Dialer{
-			Timeout: 30 * time.Second, // Set the timeout for the dialer to 30 seconds
+			Timeout: 90 * time.Second, // Set the timeout for the dialer to 30 seconds
 		}).DialContext,
 	},
 }
