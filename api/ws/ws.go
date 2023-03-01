@@ -1,6 +1,7 @@
 package ws
 
 import (
+	"encoding/json"
 	"fmt"
 	"net/http"
 	"strings"
@@ -23,29 +24,29 @@ func UpgradeWS(c *gin.Context) {
 	publicKey := c.Query("publicKey")
 	port := c.Query("port")
 	host := c.ClientIP()
-	// address := fmt.Sprintf("%s:%s", host, port)
+	address := fmt.Sprintf("%s:%s", host, port)
 
 	wsUpgrader.CheckOrigin = func(r *http.Request) bool {
 		// send http request to the address
-		// res, err := http.Get("http://" + address + "/check")
-		// if err != nil {
-		// 	fmt.Println(err)
-		// 	return false
-		// }
-		// if res.StatusCode != http.StatusAccepted {
-		// 	return false
-		// }
+		res, err := http.Get("http://" + address + "/check")
+		if err != nil {
+			fmt.Println(err)
+			return false
+		}
+		if res.StatusCode != http.StatusAccepted {
+			return false
+		}
 
-		// defer res.Body.Close()
-		// a := struct{ PublicKey string }{}
-		// err = json.NewDecoder(res.Body).Decode(&a)
-		// if err != nil {
-		// 	fmt.Println(err)
-		// 	return false
-		// }
-		// if a.PublicKey != publicKey {
-		// 	return false
-		// }
+		defer res.Body.Close()
+		a := struct{ PublicKey string }{}
+		err = json.NewDecoder(res.Body).Decode(&a)
+		if err != nil {
+			fmt.Println(err)
+			return false
+		}
+		if a.PublicKey != publicKey {
+			return false
+		}
 		return true
 	}
 	conn, err := wsUpgrader.Upgrade(c.Writer, c.Request, nil)
