@@ -3,8 +3,10 @@ package ws
 import (
 	"encoding/json"
 	"fmt"
+	"net"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -19,6 +21,15 @@ var wsUpgrader = websocket.Upgrader{
 
 var prs *peers.TPeers = peers.Peers
 
+var httpClient = &http.Client{
+	Timeout: 30 * time.Second, // Set the timeout to 30 seconds
+	Transport: &http.Transport{
+		DialContext: (&net.Dialer{
+			Timeout: 30 * time.Second, // Set the timeout for the dialer to 30 seconds
+		}).DialContext,
+	},
+}
+
 func UpgradeWS(c *gin.Context) {
 
 	publicKey := c.Query("publicKey")
@@ -28,7 +39,7 @@ func UpgradeWS(c *gin.Context) {
 
 	wsUpgrader.CheckOrigin = func(r *http.Request) bool {
 		// send http request to the address
-		res, err := http.Get("http://" + address + "/check")
+		res, err := httpClient.Get("http://" + address + "/check")
 		if err != nil {
 			fmt.Println(err)
 			return false
