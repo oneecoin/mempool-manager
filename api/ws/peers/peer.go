@@ -2,6 +2,7 @@ package peers
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/gorilla/websocket"
 	"github.com/onee-only/mempool-manager/api/ws/messages"
@@ -41,7 +42,7 @@ func (p *Peer) read() {
 		if err != nil {
 			break
 		}
-		fmt.Println("got message")
+		log.Println("got message")
 		Peers.handleMessage(m, p)
 	}
 }

@@ -1,7 +1,7 @@
 package peers
 
 import (
-	"fmt"
+	"log"
 
 	transaction_model "github.com/onee-only/mempool-manager/api/models/transaction"
 	"github.com/onee-only/mempool-manager/api/ws/messages"
@@ -52,7 +52,7 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 				Payload: payload,
 			})
 		}
-		fmt.Println("sending transactions")
+		log.Println("sending transactions")
 		p.Inbox <- m
 
 	case messages.MessageBlocksResponse:
