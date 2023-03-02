@@ -53,9 +53,11 @@ func (p *Peer) write() {
 	defer p.closeConn()
 	for {
 		m, ok := <-p.Inbox
+		log.Println("got something from inbox")
 		if !ok {
 			break
 		}
+		log.Println("sending message")
 		p.Conn.WriteMessage(websocket.TextMessage, m)
 	}
 }

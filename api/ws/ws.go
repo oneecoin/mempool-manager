@@ -2,7 +2,6 @@ package ws
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -49,7 +48,6 @@ func UpgradeWS(c *gin.Context) {
 		return true
 	}
 	conn, err := wsUpgrader.Upgrade(c.Writer, c.Request, nil)
-	log.Println("upgraded connection", conn)
 	lib.HandleErr(err)
 
 	p := &peers.Peer{
