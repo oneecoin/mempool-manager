@@ -2,6 +2,7 @@ package transaction_model
 
 import (
 	"context"
+	"log"
 	"sync"
 
 	"github.com/onee-only/mempool-manager/db"
@@ -27,12 +28,14 @@ type txsOccupationMap struct {
 }
 
 var txsOccupation txsOccupationMap = txsOccupationMap{
-	v: make(map[string]string),
+	v: nil,
 	m: sync.Mutex{},
 }
 
 func GetTxsOccupation() *txsOccupationMap {
 	if txsOccupation.v == nil {
+		log.Println("map is nil")
+		txsOccupation.v = make(map[string]string)
 		txsOccupation.m.Lock()
 		defer txsOccupation.m.Lock()
 		initTxsOccupation()
@@ -41,13 +44,17 @@ func GetTxsOccupation() *txsOccupationMap {
 }
 
 func initTxsOccupation() {
-	opts := options.Find().SetProjection(bson.D{{Key: "ID", Value: 1}})
+	log.Println("initializing map")
+	opts := options.Find().SetProjection(bson.M{"id": 1})
 
 	results := []txIDsResult{}
 	cursor, err := db.Transactions.Find(context.TODO(), bson.D{}, opts)
 	lib.HandleErr(err)
+	log.Println("got map data")
 
-	cursor.All(context.TODO(), &results)
+	err = cursor.All(context.TODO(), &results)
+	lib.HandleErr(err)
+	log.Println("got map data again")
 
 	for _, result := range results {
 		txsOccupation.v[result.ID] = ""
@@ -95,7 +102,7 @@ func unOccupyTxs(publicKey string, txIDs []string) {
 func createFilterByTxIDs(txIDs []string) primitive.D {
 	var arr bson.A
 	for _, txID := range txIDs {
-		arr = append(arr, bson.M{"ID": txID})
+		arr = append(arr, bson.M{"id": txID})
 	}
 
 	return bson.D{{
@@ -105,6 +112,6 @@ func createFilterByTxIDs(txIDs []string) primitive.D {
 
 func createFilterByTxInsFrom(publicKey string) primitive.D {
 	return bson.D{{
-		Key: "TxIns.From", Value: publicKey,
+		Key: "txins.from", Value: publicKey,
 	}}
 }

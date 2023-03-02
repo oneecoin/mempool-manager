@@ -25,7 +25,7 @@ func initSummary() *ExampleChain {
 	// get latest block
 	opts := options.Find()
 	opts.SetLimit(1)
-	opts.SetSort(bson.D{{Key: "Height", Value: -1}})
+	opts.SetSort(bson.D{{Key: "height", Value: -1}})
 
 	cursor, err := db.ExampleChain.Find(context.TODO(), bson.D{}, opts)
 	lib.HandleErr(err)

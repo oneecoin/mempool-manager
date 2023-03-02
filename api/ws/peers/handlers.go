@@ -40,7 +40,7 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 		if txs == nil {
 			m = lib.ToJSON(messages.Message{
 				Kind:    messages.MessageTxsDeclined,
-				Payload: nil,
+				Payload: lib.ToJSON(messages.PayloadCount{Count: 0}),
 			})
 			log.Println("this is unacceptable")
 		} else {

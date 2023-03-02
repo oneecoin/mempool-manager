@@ -5,6 +5,7 @@ import (
 	"crypto/sha256"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/onee-only/mempool-manager/db"
@@ -71,6 +72,7 @@ func (txModel) GetTxsForMining(minerPublicKey string, minCount int) TxS {
 	txsMap.m.Lock()
 	defer txsMap.m.Unlock()
 	for txID, publicKey := range txsMap.v {
+		log.Println(txID, publicKey)
 		if publicKey == "" {
 			txIDs = append(txIDs, txID)
 			count++
@@ -90,7 +92,7 @@ func (txModel) GetTxsForMining(minerPublicKey string, minCount int) TxS {
 	cursor, err := db.Transactions.Find(context.TODO(), filter)
 	lib.HandleErr(err)
 
-	cursor.All(context.TODO(), txs)
+	cursor.All(context.TODO(), &txs)
 
 	occupyTxs(txIDs, minerPublicKey)
 	return txs
