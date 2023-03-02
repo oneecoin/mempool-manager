@@ -33,6 +33,7 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 		payload := &messages.PayloadCount{}
 		lib.FromJSON(m.Payload, payload)
 
+		log.Println("got request from ", p.PublicKey, " and need ", payload.Count)
 		txs := transactions.GetTxsForMining(p.PublicKey, payload.Count)
 
 		var m []byte
@@ -41,6 +42,7 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 				Kind:    messages.MessageTxsDeclined,
 				Payload: nil,
 			})
+			log.Println("this is unacceptable")
 		} else {
 			txs = append(txs, transactions.CreateCoinbaseTx(len(txs), p.PublicKey))
 			payload := lib.ToJSON(messages.PayloadTxs{
@@ -48,7 +50,7 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 			})
 
 			m = lib.ToJSON(messages.Message{
-				Kind:    messages.MessageMempoolTxsResponse,
+				Kind:    messages.MessageTxsMempoolResponse,
 				Payload: payload,
 			})
 		}

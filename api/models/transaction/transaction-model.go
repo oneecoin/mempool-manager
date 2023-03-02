@@ -79,7 +79,7 @@ func (txModel) GetTxsForMining(minerPublicKey string, minCount int) TxS {
 			break
 		}
 	}
-	if count <= minCount {
+	if count < minCount {
 		return nil
 	}
 

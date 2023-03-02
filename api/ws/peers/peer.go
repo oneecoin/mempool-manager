@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/onee-only/mempool-manager/api/ws/messages"
+	"github.com/onee-only/mempool-manager/lib"
 )
 
 type TAddress struct {
@@ -44,7 +45,6 @@ func (p *Peer) read() {
 			log.Println("got err", err)
 			break
 		}
-		log.Println("got message")
 		Peers.handleMessage(m, p)
 	}
 }
@@ -53,11 +53,10 @@ func (p *Peer) write() {
 	defer p.closeConn()
 	for {
 		m, ok := <-p.Inbox
-		log.Println("got something from inbox")
 		if !ok {
 			break
 		}
-		log.Println("sending message")
-		p.Conn.WriteMessage(websocket.TextMessage, m)
+		err := p.Conn.WriteMessage(websocket.TextMessage, m)
+		lib.HandleErr(err)
 	}
 }
