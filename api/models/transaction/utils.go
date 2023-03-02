@@ -34,10 +34,9 @@ var txsOccupation txsOccupationMap = txsOccupationMap{
 
 func GetTxsOccupation() *txsOccupationMap {
 	if txsOccupation.v == nil {
-		log.Println("map is nil")
 		txsOccupation.v = make(map[string]string)
 		txsOccupation.m.Lock()
-		defer txsOccupation.m.Lock()
+		defer txsOccupation.m.Unlock()
 		initTxsOccupation()
 	}
 	return &txsOccupation
@@ -54,7 +53,7 @@ func initTxsOccupation() {
 
 	err = cursor.All(context.TODO(), &results)
 	lib.HandleErr(err)
-	log.Println("got map data again")
+	log.Println("got map data again", results)
 
 	for _, result := range results {
 		txsOccupation.v[result.ID] = ""
