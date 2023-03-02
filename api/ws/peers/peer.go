@@ -28,6 +28,7 @@ func (p Peer) GetAddress() string {
 }
 
 func (p *Peer) closeConn() {
+	log.Println("closing connection...")
 	Peers.M.Lock()
 	defer Peers.M.Unlock()
 	p.Conn.Close()
