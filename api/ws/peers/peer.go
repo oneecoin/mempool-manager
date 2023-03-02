@@ -41,6 +41,7 @@ func (p *Peer) read() {
 		if err != nil {
 			break
 		}
+		fmt.Println("got message")
 		Peers.handleMessage(m, p)
 	}
 }
