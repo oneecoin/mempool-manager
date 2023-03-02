@@ -40,6 +40,7 @@ func (p *Peer) read() {
 		m := &messages.Message{}
 		err := p.Conn.ReadJSON(m)
 		if err != nil {
+			log.Println("got err", err)
 			break
 		}
 		log.Println("got message")

@@ -3,8 +3,8 @@ package ws
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
-	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
@@ -50,6 +50,7 @@ func UpgradeWS(c *gin.Context) {
 		return true
 	}
 	conn, err := wsUpgrader.Upgrade(c.Writer, c.Request, nil)
+	log.Println("upgraded connection", conn)
 	lib.HandleErr(err)
 
 	p := &peers.Peer{
@@ -79,7 +80,7 @@ func GetPeersCount(c *gin.Context) {
 
 func GetPeers(c *gin.Context) {
 
-	host := strings.Split(c.Request.RemoteAddr, ":")[0]
+	host := c.ClientIP()
 	port := c.Query("port")
 	addr := fmt.Sprintf("%s:%s", host, port)
 	if _, exists := prs.V[addr]; !exists {
