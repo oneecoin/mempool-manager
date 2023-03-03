@@ -84,7 +84,6 @@ func (txModel) GetTxsForMining(minerPublicKey string, minCount int) TxS {
 	if count < minCount {
 		return nil
 	}
-
 	var txs TxS
 
 	filter := createFilterByTxIDs(txIDs)

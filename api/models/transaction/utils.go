@@ -71,8 +71,6 @@ func deleteTxsOccupation(txIDs []string) {
 
 func occupyTxs(txIDs []string, minerPublicKey string) {
 	txsMap := GetTxsOccupation()
-	txsMap.m.Lock()
-	defer txsMap.m.Unlock()
 	for _, txID := range txIDs {
 		txsMap.v[txID] = minerPublicKey
 	}
