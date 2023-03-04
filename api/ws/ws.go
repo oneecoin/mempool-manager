@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/gorilla/websocket"
+	"github.com/onee-only/mempool-manager/api/ws/messages"
 	"github.com/onee-only/mempool-manager/api/ws/peers"
 	"github.com/onee-only/mempool-manager/lib"
 )
@@ -51,11 +52,12 @@ func UpgradeWS(c *gin.Context) {
 	lib.HandleErr(err)
 
 	p := &peers.Peer{
-		Conn:        conn,
-		Inbox:       make(chan []byte),
-		BlockInbox:  make(chan []byte),
-		RejectCount: 0,
-		PublicKey:   publicKey,
+		Conn:         conn,
+		Inbox:        make(chan []byte),
+		BlockInbox:   make(chan []byte),
+		UTxOutsInbox: make(chan messages.PayloadUTxOuts),
+		RejectCount:  0,
+		PublicKey:    publicKey,
 		Address: peers.TAddress{
 			Host: host,
 			Port: port,
@@ -77,7 +79,7 @@ func GetPeersCount(c *gin.Context) {
 
 func GetPeers(c *gin.Context) {
 
-	host := c.Query("publicIP")
+	host := c.ClientIP()
 	port := c.Query("port")
 	addr := fmt.Sprintf("%s:%s", host, port)
 	if _, exists := prs.V[addr]; !exists {

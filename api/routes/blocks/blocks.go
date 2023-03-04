@@ -23,7 +23,10 @@ func GetBlocks(c *gin.Context) {
 func GetBlock(c *gin.Context) {
 	hash := c.Param("hash")
 	bytes := prs.RequestBlock(hash)
-	// should add error handling. like 404
+	if bytes == nil {
+		c.Status(http.StatusNotFound)
+		return
+	}
 	c.Data(http.StatusOK, "application/json", bytes)
 }
 
