@@ -77,7 +77,7 @@ func GetPeersCount(c *gin.Context) {
 
 func GetPeers(c *gin.Context) {
 
-	host := c.ClientIP()
+	host := c.Query("publicIP")
 	port := c.Query("port")
 	addr := fmt.Sprintf("%s:%s", host, port)
 	if _, exists := prs.V[addr]; !exists {

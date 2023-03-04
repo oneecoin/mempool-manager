@@ -86,7 +86,7 @@ func (txModel) GetTxsForMining(minerPublicKey string, minCount int) TxS {
 	}
 	var txs TxS
 
-	filter := createFilterByTxIDs(txIDs)
+	filter := bson.M{"id": bson.M{"$in": txIDs}}
 
 	cursor, err := db.Transactions.Find(context.TODO(), filter)
 	lib.HandleErr(err)
@@ -105,10 +105,12 @@ func (txModel) DeleteTxs(minerPublicKey string) {
 			txIDs = append(txIDs, txID)
 		}
 	}
+	log.Println("should delete: ", txIDs)
+	for _, txID := range txIDs {
+		_, err := db.ExampleChain.DeleteOne(context.TODO(), bson.M{"id": txID})
+		lib.HandleErr(err)
 
-	filter := createFilterByTxIDs(txIDs)
-	_, err := db.ExampleChain.DeleteMany(context.TODO(), filter)
-	lib.HandleErr(err)
+	}
 	deleteTxsOccupation(txIDs)
 }
 

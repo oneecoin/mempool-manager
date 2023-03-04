@@ -153,7 +153,11 @@ func (*TPeers) GetLatest() []byte {
 var newBlockMap = make(map[string]int)
 
 func handleNewBlock(address string) {
-	newBlockMap[address]++
+	if value, exists := newBlockMap[address]; exists {
+		newBlockMap[address] = value + 1
+	} else {
+		newBlockMap[address] = 1
+	}
 	if newBlockMap[address] >= calculateHalfPeers() {
 		transactions.DeleteTxs(Peers.V[address].PublicKey)
 		delete(newBlockMap, address)

@@ -8,8 +8,8 @@ import (
 	"github.com/onee-only/mempool-manager/lib"
 )
 
-var txsInbox chan transaction_model.TxS
-var balanceInbox chan int
+var txsInbox = make(chan transaction_model.TxS)
+var balanceInbox = make(chan int)
 
 func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 	switch m.Kind {
@@ -54,7 +54,6 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 				Payload: payload,
 			})
 		}
-		log.Println("sending transactions")
 		p.Inbox <- m
 
 	case messages.MessageBlocksResponse:
@@ -72,6 +71,7 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 	case messages.MessageNodeTxsResponse:
 		payload := &messages.PayloadTxs{}
 		lib.FromJSON(m.Payload, payload)
+		log.Println("got transacitons", payload.Txs.String())
 		txsInbox <- payload.Txs
 	case messages.MessageInvalidTxsRequest:
 

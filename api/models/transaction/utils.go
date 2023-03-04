@@ -8,7 +8,6 @@ import (
 	"github.com/onee-only/mempool-manager/db"
 	"github.com/onee-only/mempool-manager/lib"
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
@@ -96,19 +95,6 @@ func unOccupyTxs(publicKey string, txIDs []string) {
 	}
 }
 
-func createFilterByTxIDs(txIDs []string) primitive.D {
-	var arr bson.A
-	for _, txID := range txIDs {
-		arr = append(arr, bson.M{"id": txID})
-	}
-
-	return bson.D{{
-		Key: "$or", Value: arr,
-	}}
-}
-
-func createFilterByTxInsFrom(publicKey string) primitive.D {
-	return bson.D{{
-		Key: "txins.from", Value: publicKey,
-	}}
+func createFilterByTxInsFrom(publicKey string) bson.M {
+	return bson.M{"txins.from": publicKey}
 }
