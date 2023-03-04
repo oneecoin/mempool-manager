@@ -106,11 +106,8 @@ func (txModel) DeleteTxs(minerPublicKey string) {
 		}
 	}
 	log.Println("should delete: ", txIDs)
-	for _, txID := range txIDs {
-		_, err := db.ExampleChain.DeleteOne(context.TODO(), bson.M{"id": txID})
-		lib.HandleErr(err)
-
-	}
+	_, err := db.Transactions.DeleteMany(context.TODO(), bson.M{"id": bson.M{"$in": txIDs}})
+	lib.HandleErr(err)
 	deleteTxsOccupation(txIDs)
 }
 

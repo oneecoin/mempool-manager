@@ -71,7 +71,6 @@ func (*TPeers) handleMessage(m *messages.Message, p *Peer) {
 	case messages.MessageNodeTxsResponse:
 		payload := &messages.PayloadTxs{}
 		lib.FromJSON(m.Payload, payload)
-		log.Println("got transacitons", payload.Txs.String())
 		txsInbox <- payload.Txs
 	case messages.MessageInvalidTxsRequest:
 
