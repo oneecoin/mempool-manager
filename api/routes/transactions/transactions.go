@@ -47,11 +47,15 @@ func CreateTransaction(c *gin.Context) {
 		return
 	}
 
-	transactions.CreateTx(
+	err = transactions.CreateTx(
 		txCreateReq.PrivateKey,
 		txCreateReq.To,
 		txCreateReq.Amount,
 	)
+	if err != nil {
+		c.Status(http.StatusForbidden)
+		return
+	}
 	c.Status(http.StatusCreated)
 }
 
