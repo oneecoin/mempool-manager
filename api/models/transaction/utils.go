@@ -17,7 +17,8 @@ type txIDsResult struct {
 
 type txInsAmountResult struct {
 	TxOuts []struct {
-		Amount int
+		PublicKey string
+		Amount    int
 	}
 }
 

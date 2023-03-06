@@ -126,17 +126,21 @@ func (txModel) DeleteTx(txID string) error {
 func (txModel) GetSpentBalanceAmount(fromPublicKey string) int {
 
 	filter := createFilterByTxInsFrom(fromPublicKey)
-	opts := options.Find().SetProjection(bson.D{{Key: "txouts.amount", Value: 1}})
+	opts := options.Find().SetProjection(bson.D{{Key: "txouts", Value: 1}})
 	cursor, err := db.Transactions.Find(context.TODO(), filter, opts)
 	lib.HandleErr(err)
 
-	var result txInsAmountResult
-	err = cursor.All(context.TODO(), &result)
+	var results []txInsAmountResult
+	err = cursor.All(context.TODO(), &results)
 	lib.HandleErr(err)
 
 	amount := 0
-	for _, txOut := range result.TxOuts {
-		amount += txOut.Amount
+	for _, result := range results {
+		for _, txOut := range result.TxOuts {
+			if txOut.PublicKey != fromPublicKey {
+				amount += txOut.Amount
+			}
+		}
 	}
 	return amount
 }

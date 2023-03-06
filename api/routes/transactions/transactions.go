@@ -54,6 +54,7 @@ func CreateTransaction(c *gin.Context) {
 	)
 	if err != nil {
 		c.Status(http.StatusForbidden)
+		c.Header("err", err.Error())
 		return
 	}
 	c.Status(http.StatusCreated)

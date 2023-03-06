@@ -4,11 +4,13 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	transaction_model "github.com/onee-only/mempool-manager/api/models/transaction"
 	wallet_servie "github.com/onee-only/mempool-manager/api/services/wallet"
 	"github.com/onee-only/mempool-manager/api/ws/peers"
 )
 
 var sWallet wallet_servie.IWalletService = wallet_servie.WalletService
+var mTx transaction_model.ITxModel = transaction_model.TxModel
 
 func CreateWallet(c *gin.Context) {
 	wallet := sWallet.New()
@@ -35,6 +37,7 @@ func GetBalance(c *gin.Context) {
 	publicKey := c.Param("publicKey")
 
 	balance := peers.Peers.RequestBalance(publicKey)
+	balance -= mTx.GetSpentBalanceAmount(publicKey)
 	c.JSON(http.StatusOK, struct {
 		Balance int `json:"balance"`
 	}{Balance: balance})
