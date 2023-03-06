@@ -46,7 +46,7 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 	}
 	inputAmount := getAmountFromUTxouts(unSpentTxOuts)
 
-	change := inputAmount - amount
+	change := inputAmount - amount - spent
 
 	txIns := transaction_model.TxInS{From: fromPublicKey}
 	txOuts := transaction_model.TxOutS{}
