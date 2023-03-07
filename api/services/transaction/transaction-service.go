@@ -39,14 +39,17 @@ func (txService) CreateTx(privateKey, targetAddress string, amount int) error {
 	fromPublicKey := wallets.GetPublicFromPrivate(privKeyObj)
 
 	spent := transactions.GetSpentBalanceAmount(fromPublicKey)
-	unSpentTxOuts, available := miners.GetUnSpentTxOuts(fromPublicKey, amount+spent)
+	if spent != 0 {
+		return errors.New("already did")
+	}
+	unSpentTxOuts, available := miners.GetUnSpentTxOuts(fromPublicKey, amount)
 
 	if !available {
 		return errors.New("not enough money")
 	}
 	inputAmount := getAmountFromUTxouts(unSpentTxOuts)
 
-	change := inputAmount - amount - spent
+	change := inputAmount - amount
 
 	txIns := transaction_model.TxInS{From: fromPublicKey}
 	txOuts := transaction_model.TxOutS{}
